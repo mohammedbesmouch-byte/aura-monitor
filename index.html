@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AURA CLOUD - Monitoring Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: #0a0e17;
+  color: #e0e6ed;
+  min-height: 100vh;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a0e17; }
+::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 3px; }
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+  border-bottom: 1px solid #1e3a5f;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, #00d4ff, #007bff);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 900; color: #fff;
+  box-shadow: 0 0 20px rgba(0,212,255,0.3);
+}
+.header-title { font-size: 22px; font-weight: 900; background: linear-gradient(135deg, #00d4ff, #007bff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.header-title span { color: #8892b0; -webkit-text-fill-color: #8892b0; font-weight: 500; }
+.status-dot {
+  display: inline-block; width: 10px; height: 10px;
+  border-radius: 50%; margin-right: 6px;
+  animation: pulse 2s infinite;
+}
+.status-dot.online { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+.status-dot.offline { background: #ff4444; box-shadow: 0 0 10px #ff4444; }
+.status-text { font-size: 13px; color: #8892b0; display: flex; align-items: center; gap: 6px; }
+.last-update { font-size: 12px; color: #4a5568; }
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.stat-card {
+  background: linear-gradient(135deg, #111827, #1a2332);
+  border: 1px solid #1e3a5f;
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+}
+.stat-card:nth-child(1)::before { background: linear-gradient(90deg, #00d4ff, #007bff); }
+.stat-card:nth-child(2)::before { background: linear-gradient(90deg, #00ff88, #00cc6a); }
+.stat-card:nth-child(3)::before { background: linear-gradient(90deg, #ff6b6b, #ee5a24); }
+.stat-card:nth-child(4)::before { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+.stat-label { font-size: 13px; color: #8892b0; margin-bottom: 8px; }
+.stat-value { font-size: 32px; font-weight: 900; }
+.stat-card:nth-child(1) .stat-value { color: #00d4ff; }
+.stat-card:nth-child(2) .stat-value { color: #00ff88; }
+.stat-card:nth-child(3) .stat-value { color: #ff6b6b; }
+.stat-card:nth-child(4) .stat-value { color: #fbbf24; }
+
+/* Main Content */
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  padding: 0 24px 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Signals Table */
+.section-card {
+  background: linear-gradient(135deg, #111827, #1a2332);
+  border: 1px solid #1e3a5f;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.section-title { font-size: 18px; font-weight: 700; color: #e0e6ed; display: flex; align-items: center; gap: 8px; }
+.section-title .icon { font-size: 20px; }
+.section-badge {
+  background: #1e3a5f;
+  color: #00d4ff;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  text-align: right;
+  padding: 10px 12px;
+  color: #4a5568;
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #1e3a5f;
+  white-space: nowrap;
+}
+tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #1a2332;
+  vertical-align: middle;
+}
+tbody tr:hover { background: rgba(30,58,95,0.3); }
+tbody tr { transition: background 0.2s; }
+
+.signal-asset {
+  font-weight: 700;
+  color: #e0e6ed;
+  font-size: 14px;
+}
+.signal-price { font-family: 'Courier New', monospace; color: #8892b0; }
+.signal-time { font-size: 12px; color: #4a5568; }
+
+.badge {
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+.badge.buy { background: rgba(0,255,136,0.15); color: #00ff88; }
+.badge.sell { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+.badge.wait { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+.badge.win { background: rgba(0,255,136,0.15); color: #00ff88; }
+.badge.loss { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+.badge.neutral { background: rgba(160,174,192,0.15); color: #a0aec0; }
+.badge.pending-status { background: rgba(251,191,36,0.15); color: #fbbf24; }
+
+.confidence-bar {
+  width: 80px;
+  height: 4px;
+  background: #1a2332;
+  border-radius: 2px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+.confidence-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s;
+}
+.confidence-fill.high { background: #00ff88; }
+.confidence-fill.med { background: #fbbf24; }
+.confidence-fill.low { background: #ff6b6b; }
+
+/* Detail Row */
+.detail-row { display: none; }
+.detail-row.visible { display: table-row; }
+.detail-cell {
+  padding: 16px 20px;
+  background: rgba(10,14,23,0.5);
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+.detail-item { text-align: center; }
+.detail-item .label { font-size: 11px; color: #4a5568; }
+.detail-item .value { font-size: 14px; font-weight: 700; color: #e0e6ed; margin-top: 4px; }
+.detail-item .value.positive { color: #00ff88; }
+.detail-item .value.negative { color: #ff6b6b; }
+
+.expand-btn {
+  background: none;
+  border: 1px solid #1e3a5f;
+  color: #8892b0;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.expand-btn:hover { border-color: #00d4ff; color: #00d4ff; }
+
+/* Sidebar */
+.sidebar { display: flex; flex-direction: column; gap: 20px; }
+
+/* Sentiment */
+.sentiment-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a2332;
+}
+.sentiment-item:last-child { border-bottom: none; }
+.sentiment-icon { font-size: 20px; flex-shrink: 0; }
+.sentiment-text { flex: 1; font-size: 13px; color: #c0c8d4; }
+.sentiment-score {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.sentiment-score.positive { background: rgba(0,255,136,0.15); color: #00ff88; }
+.sentiment-score.negative { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+.sentiment-score.neutral { background: rgba(160,174,192,0.15); color: #a0aec0; }
+
+/* Alerts */
+.alert-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a2332;
+}
+.alert-item:last-child { border-bottom: none; }
+.alert-asset { font-weight: 700; font-size: 14px; }
+.alert-target { font-family: 'Courier New', monospace; color: #fbbf24; font-size: 13px; }
+.alert-user { font-size: 11px; color: #4a5568; }
+
+/* Empty State */
+.empty-state { text-align: center; padding: 40px 20px; color: #4a5568; }
+.empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 24px;
+  color: #4a5568;
+  font-size: 12px;
+  border-top: 1px solid #1e3a5f;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stat-card, .section-card { animation: fadeIn 0.5s ease-out; }
+.stat-card:nth-child(2) { animation-delay: 0.1s; }
+.stat-card:nth-child(3) { animation-delay: 0.2s; }
+.stat-card:nth-child(4) { animation-delay: 0.3s; }
+
+/* Loading */
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #0a0e17;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s;
+}
+.loading-overlay.hidden { opacity: 0; pointer-events: none; }
+.spinner {
+  width: 48px; height: 48px;
+  border: 3px solid #1e3a5f;
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); padding: 16px; }
+  .main-content { padding: 0 16px 16px; }
+  .header-title { font-size: 18px; }
+  .stat-value { font-size: 24px; }
+  table { font-size: 12px; }
+}
+@media (max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
+
+/* Refresh indicator */
+.refresh-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #00d4ff, #007bff);
+  transition: width 1s linear;
+  z-index: 9999;
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading"><div class="spinner"></div></div>
+<div class="refresh-bar" id="refreshBar"></div>
+
+<header class="header">
+  <div class="header-left">
+    <div class="logo">A</div>
+    <div>
+      <div class="header-title">AURA CLOUD <span>| Trading Bot</span></div>
+      <div class="status-text">
+        <span class="status-dot online" id="statusDot"></span>
+        <span id="statusLabel">متصل</span>
+        <span class="last-update" id="lastUpdate">-</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="stats-grid" id="statsGrid"></div>
+
+<div class="main-content">
+  <div class="content-left">
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">📊</span> آخر الإشارات</div>
+        <span class="section-badge" id="signalCount">0 إشارة</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>الأصل</th>
+              <th>التوصية</th>
+              <th>السعر</th>
+              <th>الثقة</th>
+              <th>المعنويات</th>
+              <th>النتيجة</th>
+              <th>الوقت</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="signalsBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptySignals" style="display:none">
+        <div class="icon">📡</div>
+        <p>لا توجد إشارات بعد. بانتظار أول إشارة...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">📰</span> تحليل المعنويات</div>
+      </div>
+      <div id="sentimentList">
+        <div class="empty-state">
+          <div class="icon">💬</div>
+          <p>لا توجد أخبار محللة بعد</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-header">
+        <div class="section-title"><span class="icon">🔔</span> التنبيهات النشطة</div>
+        <span class="section-badge" id="alertCount">0</span>
+      </div>
+      <div id="alertList">
+        <div class="empty-state">
+          <div class="icon">🔕</div>
+          <p>لا توجد تنبيهات نشطة</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  AURA CLOUD Trading Bot &copy; 2026 | يتم التحديث تلقائيًا كل 60 ثانية
+</div>
+
+<script>
+const DATA_URL = 'https://mohammedbesmouch-byte.github.io/aura-monitor/data.json';
+const REPO_API = 'https://api.github.com/repos/mohammedbesmouch-byte/aura-monitor/contents/data.json';
+
+let allSignals = [];
+
+function formatTime(ts) {
+  if (!ts) return '-';
+  const d = new Date(ts);
+  return d.toLocaleString('ar-EG', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+}
+
+function confidenceClass(val) {
+  if (val >= 75) return 'high';
+  if (val >= 60) return 'med';
+  return 'low';
+}
+
+function sentimentClass(label) {
+  const l = (label || '').toLowerCase();
+  if (l.includes('ايجابي') || l.includes('positive')) return 'positive';
+  if (l.includes('سلبي') || l.includes('negative')) return 'negative';
+  return 'neutral';
+}
+
+function sentimentEmoji(label) {
+  const l = (label || '').toLowerCase();
+  if (l.includes('ايجابي') || l.includes('positive')) return '🟢';
+  if (l.includes('سلبي') || l.includes('negative')) return '🔴';
+  return '⚪';
+}
+
+function toggleDetail(id) {
+  const row = document.getElementById('detail-' + id);
+  if (row) row.classList.toggle('visible');
+}
+
+function render(data) {
+  const signals = data.signals || [];
+  const sentiment = data.sentiment || [];
+  const alerts = data.alerts || [];
+  const stats = data.stats || {};
+  allSignals = signals;
+
+  // Stats
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">إجمالي الإشارات</div>
+      <div class="stat-value">${stats.total_signals || 0}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">نسبة الربح</div>
+      <div class="stat-value">${stats.win_rate || 0}%</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">التنبيهات النشطة</div>
+      <div class="stat-value">${stats.active_alerts || 0}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">متوسط الثقة</div>
+      <div class="stat-value">${stats.avg_confidence || 0}%</div>
+    </div>
+  `;
+
+  // Status
+  const dot = document.getElementById('statusDot');
+  const label = document.getElementById('statusLabel');
+  if (data.bot_status === 'online') {
+    dot.className = 'status-dot online';
+    label.textContent = 'متصل';
+  } else {
+    dot.className = 'status-dot offline';
+    label.textContent = 'غير متصل';
+  }
+  document.getElementById('lastUpdate').textContent = data.last_update ? 'آخر تحديث: ' + formatTime(data.last_update) : '';
+
+  // Signals table
+  const tbody = document.getElementById('signalsBody');
+  const empty = document.getElementById('emptySignals');
+  document.getElementById('signalCount').textContent = signals.length + ' إشارة';
+
+  if (signals.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    tbody.innerHTML = signals.map((s, i) => {
+      const recClass = (s.recommendation || '').toLowerCase();
+      const resultClass = s.result || 'pending-status';
+      const cClass = confidenceClass(s.confidence);
+      return `
+      <tr>
+        <td><span class="signal-asset">${s.asset || '-'}</span></td>
+        <td><span class="badge ${recClass}">${s.recommendation || 'wait'}</span></td>
+        <td><span class="signal-price">${s.price || '-'}</span></td>
+        <td>
+          <span>${s.confidence || 0}%</span>
+          <div class="confidence-bar"><div class="confidence-fill ${cClass}" style="width:${s.confidence || 0}%"></div></div>
+        </td>
+        <td><span class="sentiment-score ${sentimentClass(s.sentiment_label)}">${s.sentiment_label || 'محايد'}</span></td>
+        <td><span class="badge ${resultClass}">${s.result === 'pending-status' ? 'قيد الانتظار' : s.result === 'win' ? 'ربح' : s.result === 'loss' ? 'خسارة' : 'محايد'}</span></td>
+        <td><span class="signal-time">${formatTime(s.timestamp)}</span></td>
+        <td><button class="expand-btn" onclick="toggleDetail(${i})">🔽</button></td>
+      </tr>
+      <tr class="detail-row" id="detail-${i}">
+        <td colspan="8" class="detail-cell">
+          <div class="detail-grid">
+            <div class="detail-item"><div class="label">جني أرباح (TP)</div><div class="value positive">${s.tp || '-'}</div></div>
+            <div class="detail-item"><div class="label">وقف خسارة (SL)</div><div class="value negative">${s.sl || '-'}</div></div>
+            <div class="detail-item"><div class="label">مخاطرة/عائد</div><div class="value">${s.risk_reward || '-'}</div></div>
+            <div class="detail-item"><div class="label">دعم</div><div class="value">${s.support || '-'}</div></div>
+            <div class="detail-item"><div class="label">مقاومة</div><div class="value">${s.resistance || '-'}</div></div>
+            <div class="detail-item"><div class="label">RSI</div><div class="value">${s.rsi || '-'}</div></div>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Sentiment
+  const sentEl = document.getElementById('sentimentList');
+  if (sentiment.length === 0) {
+    sentEl.innerHTML = '<div class="empty-state"><div class="icon">💬</div><p>لا توجد أخبار محللة بعد</p></div>';
+  } else {
+    sentEl.innerHTML = sentiment.map(s => {
+      const sc = sentimentClass(s.label);
+      return `<div class="sentiment-item">
+        <span class="sentiment-icon">${sentimentEmoji(s.label)}</span>
+        <span class="sentiment-text">${s.headline || 'خبر'}</span>
+        <span class="sentiment-score ${sc}">${s.score || 0}</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Alerts
+  const alertEl = document.getElementById('alertList');
+  document.getElementById('alertCount').textContent = alerts.length;
+  if (alerts.length === 0) {
+    alertEl.innerHTML = '<div class="empty-state"><div class="icon">🔕</div><p>لا توجد تنبيهات نشطة</p></div>';
+  } else {
+    alertEl.innerHTML = alerts.map(a => `
+      <div class="alert-item">
+        <span class="alert-asset">${a.asset || '-'}</span>
+        <span class="alert-target">${a.target || '-'}</span>
+      </div>
+    `).join('');
+  }
+
+  // Hide loading
+  document.getElementById('loading').classList.add('hidden');
+}
+
+function fetchData() {
+  const bar = document.getElementById('refreshBar');
+  bar.style.width = '0%';
+  setTimeout(() => { bar.style.width = '100%'; }, 50);
+
+  fetch(DATA_URL + '?t=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      render(data);
+      bar.style.width = '0%';
+    })
+    .catch(() => {
+      // If fetch fails, keep showing existing data or show empty
+      bar.style.width = '0%';
+      document.getElementById('loading').classList.add('hidden');
+    });
+}
+
+// Initial load with embedded data, then start polling
+window.addEventListener('DOMContentLoaded', () => {
+  fetchData();
+  setInterval(fetchData, 60000);
+});
+</script>
+</body>
+</html>
