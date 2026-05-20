@@ -1,9 +1,9 @@
 {
   "bot_status": "online",
-  "last_update": "2026-05-20T02:58:11.667092+00:00",
+  "last_update": "2026-05-20T03:03:11.671178+00:00",
   "stats": {
     "total_signals": 2,
-    "win_rate": 0,
+    "win_rate": 0.0,
     "active_alerts": 0,
     "avg_confidence": 73.5
   },
@@ -13,7 +13,7 @@
       "recommendation": "بيع",
       "price": 1.37579,
       "confidence": 75,
-      "result": null,
+      "result": "neutral ?",
       "timestamp": "2026-05-20T01:42:12.951020+00:00",
       "tp": "",
       "sl": "",
