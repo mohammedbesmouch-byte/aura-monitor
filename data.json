@@ -1,48 +1,13 @@
 {
   "bot_status": "online",
-  "last_update": "2026-05-20T03:10:00.512751+00:00",
+  "last_update": "2026-05-20T03:15:57.635885+00:00",
   "stats": {
-    "total_signals": 2,
-    "win_rate": 0.0,
+    "total_signals": 0,
+    "win_rate": 0,
     "active_alerts": 0,
-    "avg_confidence": 73.5
+    "avg_confidence": 0
   },
-  "signals": [
-    {
-      "asset": "USDCAD",
-      "recommendation": "بيع",
-      "price": 1.37579,
-      "confidence": 75,
-      "result": "neutral ?",
-      "timestamp": "2026-05-20T01:42:12.951020+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": "",
-      "sentiment_label": "",
-      "sentiment_score": 0,
-      "reason": ""
-    },
-    {
-      "asset": "USDCHF",
-      "recommendation": "بيع",
-      "price": 0.78999,
-      "confidence": 72,
-      "result": null,
-      "timestamp": "2026-05-20T01:42:25.482727+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": "",
-      "sentiment_label": "",
-      "sentiment_score": 0,
-      "reason": ""
-    }
-  ],
+  "signals": [],
   "sentiment": [],
   "alerts": []
 }
