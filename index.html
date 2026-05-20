@@ -3,98 +3,105 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AURA CLOUD — لوحة المراقبة التفاعلية</title>
+<title>AURA CLOUD — MONITOR</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#080d1a;color:#d0d4dd;font-family:'Segoe UI',system-ui,sans-serif;padding:15px;max-width:1400px;margin:auto}
-h1{color:#deadfd;text-align:center;font-size:1.6em;margin:5px 0;display:flex;align-items:center;justify-content:center;gap:8px}
-.sub{text-align:center;color:#666;font-size:.8em;margin-bottom:12px}
-.top-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:10px;gap:8px}
-.badge-pri{color:#ffd600;font-size:.75em;background:#1a1a2e;padding:4px 12px;border-radius:20px;border:1px solid #2a2a3e}
-.clock{color:#555;font-size:.8em}
-.refresh{color:#555;font-size:.75em;cursor:pointer;transition:color .2s}
+body{background:#0b0e1a;color:#d0d4dd;font-family:'Segoe UI',system-ui,sans-serif;padding:20px;max-width:1400px;margin:auto}
+h1{color:#deadfd;text-align:center;font-size:1.5em;margin:8px 0;letter-spacing:1px}
+h1 span{color:#555;font-weight:300}
+.sub{text-align:center;color:#555;font-size:.8em;margin-bottom:15px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:12px;gap:8px}
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:6px}
+.status-dot.on{background:#00c853;box-shadow:0 0 6px #00c85366}
+.status-dot.off{background:#ff1744;box-shadow:0 0 6px #ff174466}
+.badge{color:#888;font-size:.75em;border:1px solid #2a2a3e;padding:4px 14px;border-radius:20px}
+.clock{color:#444;font-size:.75em}
+.refresh{color:#444;font-size:.75em;cursor:pointer;transition:color .2s}
 .refresh:hover{color:#deadfd}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:12px}
-.stat{background:#101726;border-radius:10px;padding:10px;text-align:center;border:1px solid #1a2a44}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}
+.stat{background:#111827;border-radius:8px;padding:12px;text-align:center;border:1px solid #1a2444}
 .stat .n{font-size:1.3em;font-weight:700;color:#deadfd}
-.stat .l{color:#666;font-size:.7em;margin-top:3px}
-.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
-.filter-btn{padding:4px 12px;border-radius:15px;font-size:.75em;cursor:pointer;border:1px solid #2a3a5e;background:transparent;color:#888;transition:all .2s}
-.filter-btn:hover{border-color:#deadfd44;color:#ccc}
-.filter-btn.active{background:#deadfd22;border-color:#deadfd;color:#deadfd}
-.search-box{background:#101726;border:1px solid #1a2a44;border-radius:15px;padding:4px 12px;color:#d0d4dd;font-size:.8em;width:120px;outline:none}
+.stat .n.green{color:#00c853}
+.stat .n.red{color:#ff1744}
+.stat .l{color:#555;font-size:.7em;margin-top:4px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.filter-btn{padding:4px 14px;border-radius:15px;font-size:.75em;cursor:pointer;border:1px solid #2a3a5e;background:transparent;color:#666;transition:all .2s}
+.filter-btn:hover{border-color:#deadfd44;color:#aaa}
+.filter-btn.active{background:#deadfd15;border-color:#deadfd;color:#deadfd}
+.search-box{background:#111827;border:1px solid #1a2444;border-radius:15px;padding:4px 12px;color:#d0d4dd;font-size:.8em;width:130px;outline:none;direction:ltr;text-align:left}
 .search-box:focus{border-color:#deadfd44}
 #signals{display:flex;flex-direction:column;gap:6px}
-.signal{background:#101726;border-radius:8px;padding:10px 14px;border:1px solid #1a2a44;cursor:pointer;transition:all .2s}
-.signal:hover{border-color:#deadfd33}
-.signal-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
-.sig-asset{color:#deadfd;font-weight:600;font-size:.85em}
+.signal{background:#111827;border-radius:8px;padding:12px 16px;border:1px solid #1a2444;cursor:pointer;transition:all .2s}
+.signal:hover{border-color:#deadfd44}
+.signal-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sig-asset{color:#deadfd;font-weight:600;font-size:.9em;min-width:70px}
 .sig-rec{display:inline-block;padding:1px 10px;border-radius:12px;font-size:.75em;font-weight:500}
-.sig-rec.buy{background:#00c85315;color:#00c853;border:1px solid #00c85333}
-.sig-rec.sell{background:#ff174415;color:#ff1744;border:1px solid #ff174433}
-.sig-rec.wait{background:#ffd60015;color:#ffd600;border:1px solid #ffd60033}
-.sig-price{color:#aaa;font-size:.8em}
+.sig-rec.buy{background:#00c85315;color:#00c853;border:1px solid #00c85344}
+.sig-rec.sell{background:#ff174415;color:#ff1744;border:1px solid #ff174444}
+.sig-rec.wait{background:#ffd60015;color:#ffd600;border:1px solid #ffd60044}
+.sig-price{color:#999;font-size:.8em}
 .sig-conf{font-size:.75em;padding:1px 8px;border-radius:10px}
 .sig-conf.high{color:#00c853}
 .sig-conf.med{color:#ffd600}
 .sig-conf.low{color:#ff1744}
-.sig-time{color:#555;font-size:.7em}
 .sig-result{font-size:.75em;padding:1px 8px;border-radius:10px}
-.sig-result.win{color:#00c853;background:#00c85312}
-.sig-result.loss{color:#ff1744;background:#ff174412}
-.sig-result.pending{color:#ffd600;background:#ffd60012}
-.sig-details{display:none;margin-top:8px;padding-top:8px;border-top:1px solid #1a2a44;font-size:.8em;grid-template-columns:1fr 1fr;gap:6px}
+.sig-result.win{color:#00c853;border:1px solid #00c85333}
+.sig-result.loss{color:#ff1744;border:1px solid #ff174433}
+.sig-result.pending{color:#ffd600;border:1px solid #ffd60033}
+.sig-time{color:#444;font-size:.7em;margin-right:auto}
+.sig-details{display:none;margin-top:10px;padding-top:10px;border-top:1px solid #1a2444;font-size:.8em;grid-template-columns:1fr 1fr;gap:8px}
 .sig-details.open{display:grid}
-.detail-item{display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid #0d1a2e}
-.detail-item .lb{color:#666}
-.detail-item .vl{color:#d0d4dd}
-.sig-reason{grid-column:1/-1;color:#888;font-style:italic;padding:4px 0}
-.section-title{color:#888;font-size:.75em;margin:12px 0 6px;font-weight:600;display:flex;align-items:center;gap:6px}
-.section-title span{color:#deadfd}
-.alerts-list{display:flex;gap:6px;flex-wrap:wrap}
-.alert-item{background:#1a1030;border:1px solid #ff174433;border-radius:6px;padding:4px 10px;font-size:.75em;color:#ff6b6b}
-.sentiment-list{display:flex;gap:6px;flex-wrap:wrap}
-.sent-item{background:#0d1a2e;border-radius:6px;padding:4px 10px;font-size:.7em;border:1px solid #1a2a44}
+.detail-item{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #0f1a2e}
+.detail-item .lb{color:#555}
+.detail-item .vl{color:#d0d4dd;font-weight:500}
+.detail-item .vl.miss{color:#555}
+.sig-reason{grid-column:1/-1;color:#888;font-style:italic;padding:6px 0;line-height:1.5}
+.empty-msg{text-align:center;color:#444;padding:30px;font-size:.85em}
+.warning{background:#1a1a00;border:1px solid #554400;border-radius:6px;padding:8px 12px;font-size:.75em;color:#997700;margin-bottom:10px;text-align:center}
+.section-title{color:#555;font-size:.75em;margin:15px 0 8px;font-weight:600;border-bottom:1px solid #1a2444;padding-bottom:4px}
+.alerts-section{display:flex;flex-direction:column;gap:4px}
+.alert-item{background:#1a1030;border:1px solid #ff174422;border-radius:6px;padding:4px 10px;font-size:.75em;color:#ff6b6b}
+.sentiment-section{display:flex;flex-direction:column;gap:4px}
+.sent-item{background:#0f1828;border-radius:6px;padding:6px 10px;font-size:.75em;border:1px solid #1a2444;display:flex;justify-content:space-between;align-items:center}
 .sent-item .pos{color:#00c853}
 .sent-item .neg{color:#ff1744}
 .sent-item .neu{color:#ffd600}
-.empty-msg{text-align:center;color:#555;padding:20px;font-size:.85em}
-.warning{background:#1a1a00;border:1px solid #665500;border-radius:6px;padding:6px 10px;font-size:.7em;color:#aa8800;margin-bottom:8px;text-align:center}
-.footer{text-align:center;color:#333;margin:20px 0;font-size:.7em}
+.sent-item .headline{color:#555;font-size:.85em}
+.footer{text-align:center;color:#222;margin:25px 0;font-size:.7em}
 @media(max-width:600px){
+  .stats{grid-template-columns:repeat(2,1fr)}
   .sig-details.open{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(3,1fr)}
-  h1{font-size:1.3em}
+  h1{font-size:1.2em}
 }
 </style>
 </head>
 <body>
-<h1>🛡️ لوحة AURA CLOUD</h1>
-<p class="sub">تحليل احترافي • مشاعر السوق • إشارات عالية الثقة</p>
+<h1>AURA CLOUD <span>| MONITOR</span></h1>
+<p class="sub">[ AI SIGNAL ANALYSIS ] ... [ REAL-TIME DATA ] ... [ LIVE FEED ]</p>
 <div class="top-bar">
-  <span class="badge-pri">🔒 قناة خاصة — وصول مقيد</span>
+  <span class="badge"><span class="status-dot off" id="statusDot"></span><span id="statusText">OFFLINE</span></span>
   <span class="clock" id="clock"></span>
-  <span class="refresh" onclick="loadData()">🔄 تحديث</span>
+  <span class="refresh" onclick="loadData()">[ REFRESH ]</span>
 </div>
 <div class="stats" id="stats"></div>
 <div class="controls">
-  <button class="filter-btn active" data-filter="all">الكل</button>
-  <button class="filter-btn" data-filter="pending">🕐 معلقة</button>
-  <button class="filter-btn" data-filter="win">✅ أرباح</button>
-  <button class="filter-btn" data-filter="loss">❌ خسائر</button>
-  <input class="search-box" id="search" placeholder="🔍 بحث عن أصل..." oninput="filterSignals()">
+  <button class="filter-btn active" data-filter="all">[ ALL ]</button>
+  <button class="filter-btn" data-filter="pending">[ PENDING ]</button>
+  <button class="filter-btn" data-filter="win">[ WIN ]</button>
+  <button class="filter-btn" data-filter="loss">[ LOSS ]</button>
+  <input class="search-box" id="search" placeholder="[ SEARCH ASSET ]" oninput="filterSignals()">
 </div>
 <div id="signals"></div>
-<div class="section-title">🔔 <span>التنبيهات</span></div>
-<div class="alerts-list" id="alerts"></div>
-<div class="section-title">📰 <span>المشاعر</span></div>
-<div class="sentiment-list" id="sentiment"></div>
-<div class="footer">AURA CLOUD V4 © 2026 • يتم التحديث كل 30 ثانية</div>
+<div class="section-title">[ PRICE ALERTS ]</div>
+<div id="alerts" class="alerts-section"></div>
+<div class="section-title">[ MARKET SENTIMENT ]</div>
+<div id="sentiment" class="sentiment-section"></div>
+<div class="footer">AURA CLOUD V4 - 2026 - AUTO UPDATE 30s</div>
 <script>
 let data = null;
 let currentFilter = 'all';
 
-function clock(){ document.getElementById('clock').textContent = new Date().toLocaleString('ar-EG') }
+function clock(){ document.getElementById('clock').textContent = new Date().toLocaleString('en-US') }
 
 function initFilters(){
   document.querySelectorAll('.filter-btn').forEach(b=>{
@@ -112,20 +119,16 @@ function filterSignals(){
   const q = document.getElementById('search').value.toUpperCase();
   let filtered = data.signals || [];
   if(currentFilter==='pending') filtered = filtered.filter(s=>s.result==='pending');
-  else if(currentFilter==='win') filtered = filtered.filter(s=>s.result==='win ✅');
-  else if(currentFilter==='loss') filtered = filtered.filter(s=>s.result==='loss ❌');
+  else if(currentFilter==='win') filtered = filtered.filter(s=>s.result==='win');
+  else if(currentFilter==='loss') filtered = filtered.filter(s=>s.result==='loss');
   if(q) filtered = filtered.filter(s=>s.asset.toUpperCase().includes(q));
   renderSignals(filtered);
 }
 
-function renderStats(d){
-  const s = d.stats || {};
-  document.getElementById('stats').innerHTML = `
-    <div class=stat><div class=n>${d.signals?d.signals.length:0}</div><div class=l>إجمالي الإشارات</div></div>
-    <div class=stat><div class=n style=color:#00c853>${s.win_rate||0}%</div><div class=l>دقة</div></div>
-    <div class=stat><div class=n>${s.active_alerts||0}</div><div class=l>تنبيهات نشطة</div></div>
-    <div class=stat><div class=n>${s.avg_confidence||0}%</div><div class=l>متوسط الثقة</div></div>
-  `;
+function recLabel(rec){
+  if(rec.includes('شراء')) return '[BUY]';
+  if(rec.includes('بيع')) return '[SELL]';
+  return '[WAIT]';
 }
 
 function recClass(rec){
@@ -140,37 +143,57 @@ function confClass(c){
   return 'low';
 }
 
+function fmtPrice(v){
+  if(!v || v==='---' || v==='--') return '---';
+  let n = parseFloat(v);
+  if(!isNaN(n)){ if(n>=1) return n.toFixed(3); return n.toFixed(6) }
+  return v;
+}
+
+function renderStats(d){
+  const sigs = d.signals || [];
+  const wins = sigs.filter(s=>s.result==='win').length;
+  const total = sigs.length;
+  const wr = total>0 ? Math.round(wins/total*100) : 0;
+  const avgConf = total>0 ? Math.round(sigs.reduce((a,s)=>a+(s.confidence||0),0)/total) : 0;
+  const act = d.alerts ? d.alerts.length : 0;
+  document.getElementById('stats').innerHTML = `
+    <div class=stat><div class=n>${total}</div><div class=l>TOTAL SIGNALS</div></div>
+    <div class=stat><div class="n green">${wr}%</div><div class=l>WIN RATE</div></div>
+    <div class=stat><div class=n>${act}</div><div class=l>ACTIVE ALERTS</div></div>
+    <div class=stat><div class=n>${avgConf}%</div><div class=l>AVG CONFIDENCE</div></div>
+  `;
+}
+
 function renderSignals(sigs){
   if(!sigs.length){
-    document.getElementById('signals').innerHTML = '<div class=empty-msg>لا توجد إشارات</div>';
+    document.getElementById('signals').innerHTML = '<div class=empty-msg>[ NO SIGNALS ]</div>';
     return;
   }
   document.getElementById('signals').innerHTML = sigs.slice().reverse().map((s,i)=>{
     const rc = recClass(s.recommendation||'');
     const cc = confClass(s.confidence);
-    let rs = sigs[sigs.length-1-i];
-    let recEmoji = s.recommendation&&s.recommendation.includes('شراء')?'🟢':(s.recommendation&&s.recommendation.includes('بيع')?'🔴':'🟡');
-    let resClass = 'pending', resText = '⏳ معلقة';
-    if(s.result==='win ✅'){resClass='win';resText='✅ ربح'}
-    else if(s.result==='loss ❌'){resClass='loss';resText='❌ خسارة'}
+    let resText = 'PENDING', resClass = 'pending';
+    if(s.result==='win'){resClass='win';resText='WIN'}
+    else if(s.result==='loss'){resClass='loss';resText='LOSS'}
     return `<div class=signal onclick="toggleDetail(${i})">
-      <div class=signal-top>
-        <span class=sig-asset>📊 ${s.asset}</span>
-        <span class="sig-rec ${rc}">${recEmoji} ${s.recommendation||'انتظار'}</span>
-        <span class=sig-price>💰 ${s.price||'—'}</span>
+      <div class=signal-header>
+        <span class=sig-asset>${s.asset||'---'}</span>
+        <span class="sig-rec ${rc}">${recLabel(s.recommendation)}</span>
+        <span class=sig-price>${s.price||'---'}</span>
         <span class="sig-conf ${cc}">${s.confidence||0}%</span>
-        <span class="sig-result ${resClass}">${resText}</span>
-        <span class=sig-time>${s.timestamp?new Date(s.timestamp).toLocaleString('ar-EG'):''}</span>
+        <span class="sig-result ${resClass}">[${resText}]</span>
+        <span class=sig-time>${s.timestamp?new Date(s.timestamp).toLocaleString('en-US'):''}</span>
       </div>
       <div class=sig-details id="det${i}">
-        ${s.tp?`<div class=detail-item><span class=lb>🎯 جني أرباح</span><span class=vl>${s.tp}</span></div>`:''}
-        ${s.sl?`<div class=detail-item><span class=lb>🛑 وقف خسارة</span><span class=vl>${s.sl}</span></div>`:''}
-        ${s.risk_reward?`<div class=detail-item><span class=lb>📊 Risk/Reward</span><span class=vl>${s.risk_reward}</span></div>`:''}
-        ${s.support?`<div class=detail-item><span class=lb>📉 الدعم</span><span class=vl>${s.support}</span></div>`:''}
-        ${s.resistance?`<div class=detail-item><span class=lb>📈 المقاومة</span><span class=vl>${s.resistance}</span></div>`:''}
-        ${s.rsi?`<div class=detail-item><span class=lb>📊 RSI</span><span class=vl>${s.rsi}</span></div>`:''}
-        ${s.sentiment_label?`<div class=detail-item><span class=lb>📰 المشاعر</span><span class=vl>${s.sentiment_label}</span></div>`:''}
-        ${s.reason?`<div class=sig-reason>💡 ${s.reason}</div>`:''}
+        ${s.tp?`<div class=detail-item><span class=lb>TP</span><span class=vl>${s.tp}</span></div>`:`<div class=detail-item><span class=lb>TP</span><span class="vl miss">---</span></div>`}
+        ${s.sl?`<div class=detail-item><span class=lb>SL</span><span class=vl>${s.sl}</span></div>`:`<div class=detail-item><span class=lb>SL</span><span class="vl miss">---</span></div>`}
+        ${s.risk_reward?`<div class=detail-item><span class=lb>R/R</span><span class=vl>${s.risk_reward}</span></div>`:`<div class=detail-item><span class=lb>R/R</span><span class="vl miss">---</span></div>`}
+        ${s.support?`<div class=detail-item><span class=lb>SUPPORT</span><span class=vl>${fmtPrice(s.support)}</span></div>`:`<div class=detail-item><span class=lb>SUPPORT</span><span class="vl miss">---</span></div>`}
+        ${s.resistance?`<div class=detail-item><span class=lb>RESISTANCE</span><span class=vl>${fmtPrice(s.resistance)}</span></div>`:`<div class=detail-item><span class=lb>RESISTANCE</span><span class="vl miss">---</span></div>`}
+        ${s.rsi?`<div class=detail-item><span class=lb>RSI</span><span class=vl>${s.rsi}</span></div>`:`<div class=detail-item><span class=lb>RSI</span><span class="vl miss">---</span></div>`}
+        ${s.sentiment_label?`<div class=detail-item><span class=lb>SENTIMENT</span><span class=vl>${s.sentiment_label}</span></div>`:''}
+        ${s.reason?`<div class=sig-reason>[ ANALYSIS ] ${s.reason}</div>`:''}
       </div>
     </div>`;
   }).join('');
@@ -184,25 +207,25 @@ function toggleDetail(i){
 function renderAlerts(d){
   const a = d.alerts||[];
   if(!a.length){
-    document.getElementById('alerts').innerHTML = '<div class=empty-msg>لا توجد تنبيهات</div>';
+    document.getElementById('alerts').innerHTML = '<div class=empty-msg>[ NO ACTIVE ALERTS ]</div>';
     return;
   }
   document.getElementById('alerts').innerHTML = a.map(al=>{
-    const dir = al.direction==='above'?'📈':'📉';
-    return `<div class=alert-item>${dir} ${al.asset} ${al.target}</div>`;
+    const dir = al.direction==='above' ? '[+]' : '[-]';
+    return `<div class=alert-item>${dir} ${al.asset} -> ${al.target}</div>`;
   }).join('');
 }
 
 function renderSentiment(d){
   const se = d.sentiment||[];
   if(!se.length){
-    document.getElementById('sentiment').innerHTML = '<div class=empty-msg>لا توجد أخبار</div>';
+    document.getElementById('sentiment').innerHTML = '<div class=empty-msg>[ NO MARKET NEWS ]</div>';
     return;
   }
   document.getElementById('sentiment').innerHTML = se.map(s=>{
     const c = s.score>0.3?'pos':(s.score<-0.3?'neg':'neu');
-    const e = s.score>0.3?'🟢':(s.score<-0.3?'🔴':'⚪');
-    return `<div class=sent-item><span class="${c}">${e} ${s.label}</span><br><span style=color:#555>${s.headline||''}</span></div>`;
+    const m = s.score>0.3?'[+]':(s.score<-0.3?'[-]':'[=]');
+    return `<div class=sent-item><span class="${c}">${m} ${s.label||'NEUTRAL'}</span><span class=headline>${s.headline||''}</span></div>`;
   }).join('');
 }
 
@@ -211,14 +234,17 @@ function loadData(){
     .then(r=>r.json())
     .then(d=>{
       data = d;
-      document.querySelector('.badge-pri').textContent = d.bot_status==='online'?'🟢 البوت متصل':'🔴 البوت غير متصل';
+      const dot = document.getElementById('statusDot');
+      const txt = document.getElementById('statusText');
+      if(d.bot_status==='online'){dot.className='status-dot on';txt.textContent='ONLINE'}
+      else{dot.className='status-dot off';txt.textContent='OFFLINE'}
       renderStats(d);
       filterSignals();
       renderAlerts(d);
       renderSentiment(d);
     })
     .catch(()=>{
-      document.getElementById('signals').innerHTML = '<div class=warning>⚠️ تعذر الاتصال بالخادم</div>';
+      document.getElementById('signals').innerHTML = '<div class=warning>[ CONNECTION ERROR ] Server unreachable</div>';
     });
 }
 
