@@ -1,0 +1,13 @@
+{
+  "bot_status": "online",
+  "last_update": "2026-05-20T05:00:00Z",
+  "stats": {
+    "total_signals": 0,
+    "win_rate": 0,
+    "active_alerts": 0,
+    "avg_confidence": 0
+  },
+  "signals": [],
+  "sentiment": [],
+  "alerts": []
+}
