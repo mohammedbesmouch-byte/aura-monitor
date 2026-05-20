@@ -1,6 +1,6 @@
 {
   "bot_status": "online",
-  "last_update": "2026-05-20T03:03:11.671178+00:00",
+  "last_update": "2026-05-20T03:10:00.512751+00:00",
   "stats": {
     "total_signals": 2,
     "win_rate": 0.0,
@@ -22,7 +22,8 @@
       "resistance": "",
       "rsi": "",
       "sentiment_label": "",
-      "sentiment_score": 0
+      "sentiment_score": 0,
+      "reason": ""
     },
     {
       "asset": "USDCHF",
@@ -38,7 +39,8 @@
       "resistance": "",
       "rsi": "",
       "sentiment_label": "",
-      "sentiment_score": 0
+      "sentiment_score": 0,
+      "reason": ""
     }
   ],
   "sentiment": [],
