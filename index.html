@@ -282,13 +282,14 @@ function initLwChart(){
   if(typeof LightweightCharts === 'undefined' || lwChart) return;
   const container = document.getElementById('gcChartContainer');
   if(!container) return;
+  const w = container.clientWidth || container.parentElement.clientWidth || 900;
   lwChart = LightweightCharts.createChart(container, {
     layout: { background: { color: '#111827' }, textColor: '#d0d4dd' },
     grid: { vertLines: { color: '#1a2444' }, horzLines: { color: '#1a2444' } },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
     rightPriceScale: { borderColor: '#1a2444' },
     timeScale: { borderColor: '#1a2444', timeVisible: true, secondsVisible: false },
-    width: container.clientWidth,
+    width: w,
     height: 450,
     handleScroll: true,
     handleScale: true,
@@ -307,7 +308,7 @@ function initLwChart(){
     borderColor: '#1a2444',
   });
   window.addEventListener('resize', () => {
-    if(lwChart && container){ lwChart.applyOptions({ width: container.clientWidth }) }
+    if(lwChart && container){ lwChart.applyOptions({ width: container.clientWidth || w }) }
   });
   updateChartData();
 }
