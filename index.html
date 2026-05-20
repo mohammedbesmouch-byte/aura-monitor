@@ -17,8 +17,10 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-s
 ::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
 ::selection{background:var(--gold);color:#000}
 a{color:var(--gold);text-decoration:none}
-.header{background:linear-gradient(135deg,#0a0e1a 0%,#151530 50%,#0a0e1a 100%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.header{background:linear-gradient(135deg,#0a0e1a 0%,#151530 50%,#0a0e1a 100%);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
 .header-left{display:flex;align-items:center;gap:12px}
+.header-center{display:flex;align-items:center;gap:12px;position:absolute;left:50%;transform:translateX(-50%)}
+.header-right{display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:absolute;right:24px}
 .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:#000;flex-shrink:0}
 .logo-text{font-size:20px;font-weight:700;letter-spacing:1px;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .logo-text span{color:var(--text3);-webkit-text-fill-color:var(--text3);font-weight:300}
@@ -123,12 +125,12 @@ tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
-<div class="header">
-  <div class="header-left">
+<div class="header" style="flex-direction:column;gap:8px">
+  <div style="display:flex;align-items:center;gap:12px">
     <div class="logo">A</div>
     <div class="logo-text">AURA <span>| CLOUD</span></div>
   </div>
-  <div class="header-right">
+  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
     <div class="status-badge online" id="statusBadge"><span class="pulse on anim" id="statusDot"></span><span id="statusText">ONLINE</span></div>
     <div class="clock"><i class="far fa-clock"></i><span id="clock"></span></div>
     <div style="font-size:13px;color:var(--text3);cursor:pointer" onclick="loadData()"><i class="fas fa-sync-alt" id="refreshIcon"></i></div>
@@ -229,7 +231,7 @@ function renderStats(d){
   const sigs=d.signals||[];
   const checked=[];
   const wins=[]
-  for(let s of sigs){if(s.result!=='pending'){checked.push(s);if(s.result==='win')wins.push(s)}}
+  for(let s of sigs){if(s.result!=='pending'&&s.result){checked.push(s);if(s.result==='win')wins.push(s)}}
   const wr=checked.length?Math.round(wins.length/checked.length*100):0;
   const total=sigs.length;
   const alerts=d.alerts?d.alerts.length:0;
@@ -456,10 +458,9 @@ function loadData(){
       renderSignals(d.signals||[]);
       renderAlerts(d);
       renderSentiment(d);
-      if(d.signals&&d.signals.length>0){
-        const last=d.signals[d.signals.length-1];
-        if(last.asset&&last.asset!==currentAsset&&['XAUUSD','BTCUSD','EURUSD','USDJPY','GBPUSD','XAGUSD'].includes(last.asset)){currentAsset=last.asset;switchAsset(currentAsset)}
-      }
+      for(let a in (d.price_history||{})){chartDataCache[a]=d.price_history[a]}
+      updatePriceChart(chartDataCache[currentAsset]||null);
+      updateTechInfo(chartDataCache[currentAsset]||null);
       if(icon)icon.className='fas fa-sync-alt';
       updateSignalFilterUI();
     })
@@ -482,7 +483,11 @@ function updateSignalFilterUI(){
 }
 
 function loadPriceHistory(asset){
-  if(!data||!data.price_history||!data.price_history[asset]){switchAsset(asset);return}
+  if(!data||!data.price_history||!data.price_history[asset]){
+    chartDataCache[asset]=null;
+    if(asset===currentAsset){updatePriceChart(null);updateTechInfo(null)}
+    return
+  }
   const prices=data.price_history[asset];
   chartDataCache[asset]=prices;
   if(asset===currentAsset){updatePriceChart(prices);updateTechInfo(prices)}
