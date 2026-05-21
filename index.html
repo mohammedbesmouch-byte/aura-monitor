@@ -127,6 +127,9 @@ tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
+<div id="ghBanner" style="display:none;background:#ffd60022;color:var(--yellow);text-align:center;padding:8px 16px;font-size:13px;border-bottom:1px solid #ffd60044">
+  <i class="fas fa-info-circle"></i> للتفاعل (✅ دخلت / ⏭ تخطيت) استخدم: <a id="botUrlLink" style="color:var(--gold);font-weight:600" target="_blank">الموقع المباشر</a>
+</div>
 <div class="header" style="flex-direction:column;gap:8px">
   <div style="display:flex;align-items:center;gap:12px">
     <div class="logo">A</div>
@@ -206,7 +209,9 @@ tr:last-child td{border-bottom:none}
 let data = null;
 const ALL_ASSETS=['EURUSD','USDJPY','GBPUSD','AUDUSD','USDCAD','USDCHF','NZDUSD','GBPJPY','EURJPY','GBPAUD','EURCHF','XAUUSD','XAGUSD','BTCUSD'];
 let currentAsset = ALL_ASSETS[0];
-const API_BASE = 'http://37.148.199.194:10993';
+const API_BASE = window.location.origin;
+const IS_GHPAGES = API_BASE.includes('github.io');
+const BOT_URL = 'http://mango.fps.ms:10993';
 let currentFilter = 'all';
 let chartDataCache = {};
 let ohlcvCache = {};
@@ -408,14 +413,17 @@ function renderSignals(sigs){
   </table>`
 }
 
+if(IS_GHPAGES){document.getElementById('ghBanner').style.display='block';document.getElementById('botUrlLink').href=BOT_URL}
+
 function apiAction(sigId, action){
-  fetch(`${API_BASE}/api/${action}/${sigId}`, {method:'POST'})
+  if(IS_GHPAGES){showToast('استخدم الرابط المباشر للتفاعل','var(--yellow)');return}
+  fetch(`/api/${action}/${sigId}`, {method:'POST'})
     .then(r=>r.json())
     .then(d=>{
-      if(d.ok){showToast(action==='enter'?'✅ Trade entered':'⏭ Trade skipped');loadData()}
-      else showToast('Error: '+d.error,'var(--red)')
+      if(d.ok){showToast(action==='enter'?'✅ دخلت الصفقة':'⏭ تم التخطي');loadData()}
+      else showToast('خطأ: '+d.error,'var(--red)')
     })
-    .catch(e=>showToast('API error: '+e.message,'var(--red)'))
+    .catch(e=>showToast('فشل الاتصال بالبوت','var(--red)'))
 }
 
 function filterSignals(){
