@@ -265,10 +265,11 @@ function renderStats(d){
   const assetMap={};
   for(let s of checked){if(!assetMap[s.asset])assetMap[s.asset]={wins:0,total:0};assetMap[s.asset].total++;if(s.result==='win')assetMap[s.asset].wins++}
   for(let a in assetMap){const r=assetMap[a].total?Math.round(assetMap[a].wins/assetMap[a].total*100):0;if(r>bestAsset.wr){bestAsset.name=a;bestAsset.wr=r}}
+  const ev=d.eval||{entered:0,won:0,lost:0,entered_win_rate:0};
   document.getElementById('miniStats').innerHTML=`
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-calendar-day"></i> Today's Signals</span><span class="sm-value">${todaySigs.length}</span></div>
-    <div class="stat-mini"><span class="sm-label"><i class="fas fa-crown"></i> Best Asset</span><span class="sm-value" style="color:var(--gold)">${bestAsset.name}</span></div>
-    <div class="stat-mini"><span class="sm-label"><i class="fas fa-check-circle"></i> Best Win Rate</span><span class="sm-value" style="color:var(--green)">${bestAsset.wr}%</span></div>
+    <div class="stat-mini"><span class="sm-label"><i class="fas fa-check-circle"></i> Entered Trades</span><span class="sm-value" style="color:var(--gold)">${ev.entered}</span></div>
+    <div class="stat-mini"><span class="sm-label"><i class="fas fa-trophy"></i> Entered Win Rate</span><span class="sm-value" style="color:${ev.entered_win_rate>=50?'var(--green)':'var(--red)'}">${ev.entered_win_rate}%</span></div>
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-robot"></i> Bot Status</span><span class="sm-value" style="color:${d.bot_status==='online'?'var(--green)':'var(--red)'}">${d.bot_status==='online'?'OPERATIONAL':'OFFLINE'}</span></div>
   `;
 }
