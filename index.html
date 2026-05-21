@@ -151,6 +151,11 @@ tr:last-child td{border-bottom:none}
 .action-btn.enter:hover{background:#00c85333;transform:scale(1.2)}
 .action-btn.skip:hover{background:#ff174433;transform:scale(1.2)}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--card-bg);border:1px solid var(--green);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--green);z-index:999;opacity:0;transform:translateY(20px);transition:all 0.3s;pointer-events:none}
+/* Background image slider */
+#bgSlider{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;overflow:hidden}
+.bg-slide{position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;opacity:0;transition:opacity 1.5s ease}
+.bg-slide.active{opacity:1}
+#bgOverlay{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;background:linear-gradient(135deg,rgba(10,14,26,0.88) 0%,rgba(10,14,26,0.82) 50%,rgba(10,14,26,0.88) 100%)}
 .toast.show{opacity:1;transform:translateY(0)}
 .text-center{text-align:center}
 .mt-8{margin-top:8px}
@@ -183,6 +188,8 @@ tr:last-child td{border-bottom:none}
 </style>
 </head>
 <body>
+<div id="bgSlider"></div>
+<div id="bgOverlay"></div>
 <div id="ghBanner" style="display:none;background:#ffd60022;color:var(--yellow);text-align:center;padding:8px 16px;font-size:13px;border-bottom:1px solid #ffd60044">
   <i class="fas fa-info-circle"></i> البيان المباشر مع التفاعل: <a id="botUrlLink" style="color:var(--gold);font-weight:600" target="_blank">www.fps.ms:10993/monitor.html</a>
 </div>
@@ -384,6 +391,33 @@ function requestNotifPerm(){
     Notification.requestPermission().then(p=>showToast(p==='granted'?'🔔 Notifications ON':'🔕 Notifications blocked','var(--'+(p==='granted'?'green':'red')+')'))
   }
 }
+
+// Background image slider
+const bgImages=[
+  'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1920&q=80',
+  'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1920&q=80',
+  'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=1920&q=80',
+  'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=1920&q=80',
+  'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1920&q=80',
+  'https://images.unsplash.com/photo-1535320903710-d993d3d77b29?w=1920&q=80'
+];
+let bgIdx=0;
+function initBgSlider(){
+  const container=document.getElementById('bgSlider');
+  bgImages.forEach((url,i)=>{
+    const div=document.createElement('div');
+    div.className='bg-slide'+(i===0?' active':'');
+    div.style.backgroundImage='url('+url+')';
+    container.appendChild(div)
+  });
+  setInterval(()=>{
+    const slides=container.querySelectorAll('.bg-slide');
+    slides[bgIdx].classList.remove('active');
+    bgIdx=(bgIdx+1)%slides.length;
+    slides[bgIdx].classList.add('active')
+  },3600000) // every hour
+}
+initBgSlider();
 
 function animateValue(el,start,end,duration=800){
   if(!el)return;
