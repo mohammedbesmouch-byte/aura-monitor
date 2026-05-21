@@ -152,6 +152,14 @@ tr:last-child td{border-bottom:none}
 .chat-ai{text-align:right;color:var(--text2)}
 .chat-ai em{color:var(--text3);font-style:normal}
 .cal-row{display:grid;grid-template-columns:80px 1fr 50px 60px;padding:5px 6px;border-bottom:1px solid var(--border);font-size:10px;align-items:center;gap:4px}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:1000;justify-content:center;align-items:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;font-size:13px;line-height:1.8}
+.modal-box h2{color:var(--gold);font-size:18px;margin-bottom:12px}
+.modal-box h3{color:var(--text);font-size:14px;margin:16px 0 8px}
+.modal-box p{color:var(--text2);margin:6px 0}
+.modal-box .close-modal{float:left;cursor:pointer;color:var(--text3);font-size:22px}
+.modal-box .close-modal:hover{color:var(--text)}
 .cal-header{color:var(--text3);font-weight:500;border-bottom:2px solid var(--border)}
 </style>
 </head>
@@ -1055,5 +1063,53 @@ setInterval(loadData,15000);
     <button onclick="sendChat()" style="padding:8px 14px;background:var(--gold);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600">➤</button>
   </div>
 </div>
+<div class="modal-overlay" id="privacyModal" onclick="if(event.target===this)closeModal('privacyModal')">
+  <div class="modal-box">
+    <span class="close-modal" onclick="closeModal('privacyModal')">✕</span>
+    <h2>🔒 سياسة الخصوصية</h2>
+    <p>آخر تحديث: مايو 2026</p>
+    <h3>1. المعلومات التي نجمعها</h3>
+    <p>نحن نجمع فقط المعلومات التي تقدمها طواعية: معرف المستخدم في Telegram (user ID)، وتفاعلاتك مع إشارات التداول (دخول، خروج، تخطي). لا نجمع أي معلومات شخصية مثل الاسم أو البريد الإلكتروني أو رقم الهاتف.</p>
+    <h3>2.如何使用 المعلومات</h3>
+    <p>نستخدم المعلومات فقط لتحسين جودة إشارات التداول وتحليل أدائك. لا نبيع أو نشارك أو نؤجر معلوماتك لأي طرف ثالث.</p>
+    <h3>3. تخزين البيانات</h3>
+    <p>تُخزَّن البيانات محلياً على خادم AURA CLOUD ولا تُنقل إلى أي خدمة خارجية باستثناء واجهة المراقبة (GitHub Pages) التي تعرض البيانات بشكل مجهول.</p>
+    <h3>4. أمان البيانات</h3>
+    <p>نتخذ إجراءات أمنية معقولة لحماية بياناتك. مع ذلك، لا يمكن ضمان الأمان المطلق عبر الإنترنت.</p>
+    <h3>5. حقوقك</h3>
+    <p>لك الحق في طلب حذف بياناتك في أي وقت عن طريق مراسلتنا. نحتفظ بالحق في تعديل هذه السياسة وسنُعلمك بالتغييرات الجوهرية.</p>
+  </div>
+</div>
+<div class="modal-overlay" id="termsModal" onclick="if(event.target===this)closeModal('termsModal')">
+  <div class="modal-box">
+    <span class="close-modal" onclick="closeModal('termsModal')">✕</span>
+    <h2>📜 شروط الخدمة</h2>
+    <p>آخر تحديث: مايو 2026</p>
+    <h3>1. قبول الشروط</h3>
+    <p>باستخدامك لـ AURA CLOUD، فإنك توافق على هذه الشروط. إذا كنت لا توافق، يرجى التوقف عن استخدام الخدمة.</p>
+    <h3>2. وصف الخدمة</h3>
+    <p>AURA CLOUD هو بوت تحليل فني يقدم إشارات تداول بناءً على مؤشرات فنية وذكاء اصطناعي. الإشارات لأغراض تعليمية وإعلامية فقط ولا تُعتبر توصية مالية.</p>
+    <h3>3. إخلاء مسؤولية</h3>
+    <p><strong>التداول في الأسواق المالية ينطوي على مخاطر عالية وقد يؤدي إلى خسارة رأس مالك بالكامل.</strong> AURA CLOUD لا يضمن أرباحاً ولا يتحمل أي مسؤولية عن أي خسائر مالية تتكبدها نتيجة الاعتماد على إشاراته. أنت وحدك المسؤول عن قراراتك الاستثمارية.</p>
+    <h3>4. استخدام الخدمة</h3>
+    <p>أنت توافق على استخدام الخدمة لأغراض شخصية فقط، وليس لأي نشاط غير قانوني. يحق لنا تعليق أو إنهاء وصولك إذا انتهكت هذه الشروط.</p>
+    <h3>5. الملكية الفكرية</h3>
+    <p>جميع حقوق الملكية الفكرية للكود والتصميم والتحليلات تعود لمطوري AURA CLOUD. لا يُسمح بنسخ أو توزيع البرنامج دون إذن.</p>
+    <h3>6. تعديل الخدمة</h3>
+    <p>نحتفظ بالحق في تعديل الخدمة أو إيقافها في أي وقت دون إشعار مسبق.</p>
+  </div>
+</div>
+<div style="text-align:center;padding:20px;border-top:1px solid var(--border);margin-top:30px;font-size:12px;color:var(--text3)">
+  <span style="cursor:pointer;color:var(--gold)" onclick="openModal('privacyModal')">🔒 سياسة الخصوصية</span>
+  <span style="margin:0 12px;color:var(--border)">|</span>
+  <span style="cursor:pointer;color:var(--gold)" onclick="openModal('termsModal')">📜 شروط الخدمة</span>
+  <span style="margin:0 12px;color:var(--border)">|</span>
+  <span>© 2026 AURA CLOUD</span>
+</div>
+<script>
+function openModal(id){document.getElementById(id).classList.add('show');document.body.style.overflow='hidden'}
+function closeModal(id){document.getElementById(id).classList.remove('show');document.body.style.overflow=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.modal-overlay.show').forEach(m=>{m.classList.remove('show')});document.body.style.overflow=''}})
+</script>
 </body>
 </html>
