@@ -135,6 +135,13 @@ tr:last-child td{border-bottom:none}
 .text-center{text-align:center}
 .mt-8{margin-top:8px}
 .mt-16{margin-top:16px}
+.calc-input{width:100%;padding:8px 10px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;margin-top:4px;box-sizing:border-box}
+.calc-input:focus{border-color:var(--gold);outline:none}
+.note-input{background:transparent;border:none;border-bottom:1px dashed var(--border);color:var(--text);font-size:11px;width:100%;padding:2px 0}
+.note-input:focus{border-color:var(--gold);outline:none}
+.tag-btn{cursor:pointer;padding:2px 6px;border-radius:4px;font-size:10px;border:1px solid var(--border);background:transparent;margin:1px;transition:all 0.2s}
+.tag-btn:hover{border-color:var(--gold)}
+.tag-btn.active{background:var(--gold);color:#000;border-color:var(--gold)}
 </style>
 </head>
 <body>
@@ -239,6 +246,19 @@ tr:last-child td{border-bottom:none}
         <input class="search-input" id="rcTP" placeholder="Take Profit (opt)" oninput="riskCalc()" style="width:100%">
       </div>
       <div id="rcResult" style="margin-top:8px;font-size:13px;color:var(--text3)">Fill the fields above</div>
+    </div>
+
+    <div class="card" style="grid-column:span 1">
+      <div class="card-header"><span class="card-title"><i class="fas fa-calculator"></i> Position Size</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><label style="color:var(--text3);font-size:11px">Balance ($)</label><input type="number" id="psBalance" value="1000" class="calc-input" oninput="calcPosition()"></div>
+        <div><label style="color:var(--text3);font-size:11px">Risk %</label><input type="number" id="psRisk" value="2" class="calc-input" oninput="calcPosition()"></div>
+        <div><label style="color:var(--text3);font-size:11px">Entry</label><input type="number" id="psEntry" value="1.10" class="calc-input" oninput="calcPosition()"></div>
+        <div><label style="color:var(--text3);font-size:11px">SL</label><input type="number" id="psSl" value="1.09" class="calc-input" oninput="calcPosition()"></div>
+      </div>
+      <div id="psResult" style="margin-top:10px;padding:10px;background:var(--bg);border-radius:8px;font-size:13px">
+        <span style="color:var(--text3)">Fill fields to calculate</span>
+      </div>
     </div>
 
     <div class="section-title">
@@ -496,7 +516,7 @@ function renderSignals(sigs){
   document.getElementById('signalsTable').innerHTML=`
   <table>
     <thead><tr>
-      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th><th>Decision</th><th>AI</th><th>Action</th>
+      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th><th>Decision</th><th>Tags</th><th>Notes</th><th>AI</th><th>Share</th><th>Action</th>
     </tr></thead>
     <tbody>
     ${sigs.slice().reverse().map(s=>{
@@ -509,7 +529,7 @@ function renderSignals(sigs){
       const id=s.id||s.timestamp;
       const actions=canAct?`<button class="action-btn enter" onclick="apiAction('${id}','enter')" title="Enter">✅</button><button class="action-btn skip" onclick="apiAction('${id}','skip')" title="Skip">⏭</button>`:(hasEntered?`<button class="action-btn skip" onclick="apiAction('${id}','exit')" title="Exit Now">🚪 EXIT</button>`:'<span style="color:var(--text3);font-size:11px">—</span>');
       return `<tr>
-        <td style="color:var(--text3);font-size:12px">${s.timestamp?new Date(s.timestamp).toLocaleString('en-US',{hour12:false}):'--'}</td>
+        <td style="color:var(--text3);font-size:12px">${s.timestamp?new Date(s.timestamp).toLocaleString('en-US',{hour12:false}):'--'}<br><span style="font-size:9px;color:var(--bg3)">${s.timestamp?timeAgo(s.timestamp):''}</span></td>
         <td><span class="asset-name" onclick="switchAsset('${s.asset}')">${s.asset||'--'}</span></td>
         <td><span class="tag ${rc}">${recLabel(s.recommendation)}</span></td>
         <td style="font-weight:600;font-size:14px">${s.price||'--'}</td>
@@ -520,7 +540,10 @@ function renderSignals(sigs){
         <td style="font-size:11px">${userStatus}</td>
         <td>${resultLabel(s.result)}</td>
         <td style="font-size:11px">${decisionLabel(s)}</td>
+        <td style="font-size:11px">${s.tags&&s.tags.length?s.tags.map(t=>`<span class="tag" style="font-size:9px;padding:1px 5px">${t}</span>`).join(' '):'<span style="color:var(--text3)">—</span>'}</td>
+        <td style="font-size:11px;max-width:100px">${s.notes?`<span style="color:var(--text2);font-size:10px">${s.notes}</span>`:'<span style="color:var(--text3)">—</span>'}</td>
         <td style="font-size:11px;max-width:140px">${s.ai_review?`<span style="color:var(--text2)">${s.ai_review}</span>`:`<button class="action-btn" onclick="requestAiReview('${id}')" title="AI Review" style="font-size:10px;padding:2px 8px">🔍 تحليل</button>`}</td>
+        <td style="font-size:11px"><button class="action-btn" onclick="copySignalId('${id}')" title="Copy ID" style="font-size:11px">🔗</button></td>
         <td style="font-size:13px">${actions}</td>
       </tr>`
     }).join('')}
@@ -539,6 +562,20 @@ function apiAction(sigId, action){
       else showToast('خطأ: '+d.error,'var(--red)')
     })
     .catch(e=>showToast('فشل الاتصال بالبوت (Mixed Content? استخدم الرابط المباشر)','var(--red)'))
+}
+
+function timeAgo(ts){
+  const sec=Math.floor((Date.now()-new Date(ts).getTime())/1000);
+  if(sec<60)return 'now';
+  const min=Math.floor(sec/60);
+  if(min<60)return min+'m';
+  const hr=Math.floor(min/60);
+  if(hr<24)return hr+'h';
+  return Math.floor(hr/24)+'d'
+}
+
+function copySignalId(id){
+  navigator.clipboard.writeText(id).then(()=>showToast('✅ Signal ID copied: '+id,'var(--green)')).catch(()=>showToast('❌ Copy failed','var(--red)'))
 }
 
 function requestAiReview(sigId){
@@ -608,6 +645,32 @@ function riskCalc(){
       <div>📈 Profit: <strong style="color:var(--green)">${roundTo(pp,2)}$</strong></div>
       <div>⚖️ R:R: <strong style="color:var(--gold)">${rr}</strong></div>
     </div>`
+}
+
+function calcPosition(){
+  const bal=parseFloat(document.getElementById('psBalance').value)||0;
+  const risk=parseFloat(document.getElementById('psRisk').value)||0;
+  const entry=parseFloat(document.getElementById('psEntry').value)||0;
+  const sl=parseFloat(document.getElementById('psSl').value)||0;
+  if(!bal||!risk||!entry||!sl||entry===sl){
+    document.getElementById('psResult').innerHTML='<span style="color:var(--text3)">Fill all fields</span>';
+    return
+  }
+  const riskAmt=bal*risk/100;
+  const slDist=Math.abs(entry-sl);
+  const units=riskAmt/slDist;
+  const isLong=entry>sl;
+  const tp1=isLong?entry+slDist*2:entry-slDist*2;
+  const tp2=isLong?entry+slDist*3:entry-slDist*3;
+  const rr=slDist>0?(Math.abs(tp1-entry)/slDist).toFixed(2):1;
+  document.getElementById('psResult').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div><span style="color:var(--text3)">🟢 Size:</span> <strong>${units.toFixed(2)}</strong></div>
+      <div><span style="color:var(--text3)">💰 At Risk:</span> <strong style="color:var(--red)">$${riskAmt.toFixed(2)}</strong></div>
+      <div><span style="color:var(--text3)">🎯 TP (2R):</span> <strong style="color:var(--green)">${tp1.toFixed(5)}</strong></div>
+      <div><span style="color:var(--text3)">🎯 TP (3R):</span> <strong style="color:var(--gold)">${tp2.toFixed(5)}</strong></div>
+      <div><span style="color:var(--text3)">📊 R:R:</span> <strong>1:${rr}</strong></div>
+    </div>`;
 }
 
 function renderArchive(d){
