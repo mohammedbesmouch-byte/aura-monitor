@@ -139,7 +139,7 @@ tr:last-child td{border-bottom:none}
 </head>
 <body>
 <div id="ghBanner" style="display:none;background:#ffd60022;color:var(--yellow);text-align:center;padding:8px 16px;font-size:13px;border-bottom:1px solid #ffd60044">
-  <i class="fas fa-info-circle"></i> للتفاعل (✅ دخلت / ⏭ تخطيت) استخدم: <a id="botUrlLink" style="color:var(--gold);font-weight:600" target="_blank">الموقع المباشر</a>
+  <i class="fas fa-info-circle"></i> البيان المباشر مع التفاعل: <a id="botUrlLink" style="color:var(--gold);font-weight:600" target="_blank">www.fps.ms:10993/monitor.html</a>
 </div>
 <div class="header" style="flex-direction:column;gap:8px">
   <div style="display:flex;align-items:center;gap:12px">
@@ -515,17 +515,17 @@ function renderSignals(sigs){
   </table>`
 }
 
-if(IS_GHPAGES){document.getElementById('ghBanner').style.display='block';document.getElementById('botUrlLink').href=BOT_URL}
+if(IS_GHPAGES){document.getElementById('ghBanner').style.display='block';document.getElementById('botUrlLink').href=BOT_URL+'/monitor.html'}
 
 function apiAction(sigId, action){
-  if(IS_GHPAGES){showToast('استخدم الرابط المباشر للتفاعل','var(--yellow)');return}
-  fetch(`/api/${action}/${sigId}`, {method:'POST'})
+  const base=IS_GHPAGES?BOT_URL:'';
+  fetch(base+`/api/${action}/${sigId}`, {method:'POST'})
     .then(r=>r.json())
     .then(d=>{
-      if(d.ok){showToast(action==='enter'?'✅ دخلت الصفقة':'⏭ تم التخطي');loadData()}
+      if(d.ok){showToast(action==='enter'?'✅ دخلت الصفقة':(action==='exit'?'🚪 خرجت':'⏭ تم التخطي'));loadData()}
       else showToast('خطأ: '+d.error,'var(--red)')
     })
-    .catch(e=>showToast('فشل الاتصال بالبوت','var(--red)'))
+    .catch(e=>showToast('فشل الاتصال بالبوت (Mixed Content? استخدم الرابط المباشر)','var(--red)'))
 }
 
 function filterSignals(){
@@ -711,7 +711,7 @@ function initCompChart(d){
 function loadData(){
   const icon=document.getElementById('refreshIcon');
   if(icon)icon.className='fas fa-sync-alt spin';
-  fetch('data.json?_t='+Date.now())
+  fetch((IS_GHPAGES?BOT_URL:'')+'/data.json?_t='+Date.now())
     .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
     .then(d=>{
       data=d;
@@ -742,7 +742,8 @@ function loadData(){
     })
     .catch(err=>{
       console.error(err);
-      document.getElementById('loading').innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i><p style="color:var(--red)">⚠️ Connection error — لا يمكن الاتصال بالسيرفر</p><p style="color:var(--text3);font-size:13px;margin-top:8px">تأكد من أن البوت شغال على mango.fps.ms:10993<br>سيتم إعادة المحاولة تلقائياً كل 15 ثانية</p></div>`;
+      const ghMsg=IS_GHPAGES?`<p style="color:var(--yellow);font-size:13px;margin-top:8px">🔒 GitHub Pages لا يدعم طلبات HTTP المباشرة<br>استخدم الرابط المباشر للبيانات الحية والتفاعل:</p><a href="${BOT_URL}/monitor.html" target="_blank" style="display:inline-block;margin-top:8px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a>`:'';
+      document.getElementById('loading').innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i><p style="color:var(--red)">⚠️ لا يمكن الاتصال بالسيرفر</p>${ghMsg||`<p style="color:var(--text3);font-size:13px;margin-top:8px">تأكد من أن البوت شغال<br>سيتم إعادة المحاولة تلقائياً كل 15 ثانية</p>`}</div>`;
       if(icon)icon.className='fas fa-sync-alt'
     })
 }
