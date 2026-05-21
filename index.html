@@ -10,6 +10,17 @@
 <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 :root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2444;--gold:#deadfd;--gold2:#c084fc;--green:#00c853;--red:#ff1744;--yellow:#ffd600;--text:#d0d4dd;--text2:#888;--text3:#555;--card-bg:#111827;--border:#1a2444}
+.heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
+.heatmap-item{padding:8px;border-radius:6px;text-align:center;font-size:11px;font-weight:600;border:1px solid var(--border)}
+.heatmap-item .h-asset{font-size:10px;color:var(--text3)}
+.heatmap-item .h-wr{font-size:14px}
+.bar-chart{display:flex;align-items:flex-end;gap:4px;height:100px;padding:8px 0;margin-top:8px}
+.bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bar-fill{width:100%;border-radius:3px 3px 0 0;min-height:2px;transition:height 0.5s}
+.bar-label{font-size:9px;color:var(--text3);transform:rotate(-45deg);white-space:nowrap}
+.comp-select{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 12px;color:var(--text);font-size:13px;outline:none}
+.comp-select:focus{border-color:var(--gold)}
+@media(max-width:700px){.heatmap{grid-template-columns:repeat(4,1fr)}.header-center{position:static;transform:none}.header-right{position:static}}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;padding:0;margin:0;min-height:100vh;overflow-x:hidden}
 ::-webkit-scrollbar{width:6px}
@@ -145,7 +156,8 @@ tr:last-child td{border-bottom:none}
 <div class="container">
   <div id="loading" class="loading">
     <div><i class="fas fa-circle-notch spin"></i></div>
-    <p>Loading AURA monitoring data...</p>
+    <p>🔄 جاري تحميل بيانات AURA...</p>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">يتم جلب الإشارات من السيرفر mango.fps.ms:10993</p>
   </div>
 
   <div id="dashboard" style="display:none">
@@ -166,8 +178,18 @@ tr:last-child td{border-bottom:none}
 
     <div class="card" id="behaviorBox" style="padding:12px;margin-bottom:16px;font-size:13px;text-align:center;border-color:var(--gold)"></div>
 
-    <div class="section-title">
-      <i class="fas fa-chart-line"></i> Real-Time Price Charts
+    <div class="grid grid-2">
+      <div>
+        <div class="section-title"><i class="fas fa-fire"></i> Asset Heatmap</div>
+        <div class="card" id="heatmapSection" style="padding:12px"><div class="empty-state" style="padding:10px"><p>No data yet</p></div></div>
+      </div>
+      <div>
+        <div class="section-title"><i class="fas fa-clock"></i> Performance by Hour</div>
+        <div class="card" id="perfHourSection" style="padding:12px"><div class="empty-state" style="padding:10px"><p>No data yet</p></div></div>
+      </div>
+    </div>
+
+    <div class="section-title"><i class="fas fa-chart-line"></i> Real-Time Price Charts
       <span>| Live from Yahoo Finance</span>
     </div>
     <div style="margin-bottom:16px;overflow-x:auto;white-space:nowrap">
@@ -177,9 +199,19 @@ tr:last-child td{border-bottom:none}
       <div id="gcChartContainer" style="height:480px;width:100%;border-radius:8px;overflow:hidden"></div>
     </div>
 
+    <div class="section-title"><i class="fas fa-arrows-alt-h"></i> Comparison Chart</div>
+    <div class="card" style="padding:12px;margin-bottom:16px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <select class="comp-select" id="compAsset1" onchange="updateCompChart()"></select>
+        <select class="comp-select" id="compAsset2" onchange="updateCompChart()"></select>
+        <span style="color:var(--text3);font-size:12px">— Select two assets to compare</span>
+      </div>
+      <div id="compChartContainer" style="height:300px;width:100%;border-radius:8px;overflow:hidden"></div>
+    </div>
+
     <div class="section-title">
       <i class="fas fa-bolt"></i> Live Signal Log
-      <span>| Auto-refresh every 30s</span>
+      <span>| Auto-refresh every 15s</span>
     </div>
     <div class="filter-bar" id="signalFilters">
       <button class="filter-btn active" data-filter="all">All</button>
@@ -191,7 +223,7 @@ tr:last-child td{border-bottom:none}
       <input class="search-input" id="searchInput" placeholder="Search asset..." oninput="filterSignals()">
       <button class="filter-btn" onclick="exportCSV()" style="color:var(--gold);border-color:var(--gold)" title="Export CSV"><i class="fas fa-download"></i> CSV</button>
     </div>
-    <div class="table-wrap" id="signalsTable"><div class="empty-state"><i class="fas fa-database"></i><p>No signals yet</p></div></div>
+    <div class="table-wrap" id="signalsTable"><div class="empty-state"><i class="fas fa-database"></i><p>لا توجد إشارات بعد</p><p style="font-size:12px;color:var(--text3);margin-top:6px">الرادار يبحث عن إشارات جديدة كل 30 دقيقة</p></div></div>
 
     <div class="section-title">
       <i class="fas fa-calculator"></i> Risk Calculator
@@ -603,6 +635,79 @@ function renderSentiment(d){
   }).join('')
 }
 
+function renderHeatmap(d){
+  const sigs=d.signals||[];
+  const map={};
+  for(let s of sigs){
+    const a=s.asset; if(!a)continue;
+    if(!map[a])map[a]={wins:0,total:0};
+    map[a].total++;
+    if(s.result==='win')map[a].wins++;
+  }
+  const assets=Object.keys(map).sort();
+  const el=document.getElementById('heatmapSection');
+  if(!assets.length){el.innerHTML='<div class="empty-state" style="padding:10px"><p>No trade data yet</p></div>';return}
+  el.innerHTML='<div class="heatmap">'+assets.map(a=>{
+    const w=map[a].total?Math.round(map[a].wins/map[a].total*100):0;
+    const c=w>=70?'#00c853':(w>=50?'#ffd600':'#ff1744');
+    return `<div class="heatmap-item" style="border-color:${c}44"><div class="h-wr" style="color:${c}">${w}%</div><div class="h-asset">${a}</div></div>`
+  }).join('')+'</div>'
+}
+
+function renderPerfHour(d){
+  const ph=d.perf_hour||{};
+  const el=document.getElementById('perfHourSection');
+  const keys=Object.keys(ph).sort((a,b)=>parseInt(a)-parseInt(b));
+  if(!keys.length){el.innerHTML='<div class="empty-state" style="padding:10px"><p>No hourly data yet</p></div>';return}
+  const max=Math.max(...keys.map(h=>ph[h].wr),1);
+  el.innerHTML='<div class="bar-chart">'+keys.map(h=>{
+    const wr=ph[h].wr||0; const hh=Math.round(wr/max*80);
+    const c=wr>=70?'#00c853':(wr>=50?'#ffd600':'#ff1744');
+    return `<div class="bar-item"><div class="bar-fill" style="height:${hh}px;background:${c}"></div><div class="bar-label">${h}:00</div></div>`
+  }).join('')+'</div>'
+}
+
+let compChart = null, compSeries1 = null, compSeries2 = null;
+
+function updateCompChart(){
+  if(!data)return;
+  const a1=document.getElementById('compAsset1').value;
+  const a2=document.getElementById('compAsset2').value;
+  const container=document.getElementById('compChartContainer');
+  if(!a1||!a2)return;
+  const h1=data.price_history?.[a1]||[];
+  const h2=data.price_history?.[a2]||[];
+  const len=Math.min(h1.length,h2.length);
+  if(len<2)return;
+  if(!compChart){
+    compChart=LightweightCharts.createChart(container,{
+      layout:{textColor:'#d0d4dd',background:{color:'#111827'}},
+      grid:{vertLines:{color:'#1a2444'},horzLines:{color:'#1a2444'}},
+      crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
+      rightPriceScale:{borderColor:'#1a2444'},
+      timeScale:{borderColor:'#1a2444',timeVisible:true,secondsVisible:false},
+      width:container.clientWidth||900,height:280
+    });
+    compSeries1=compChart.addLineSeries({color:'#00c853',lineWidth:2});
+    compSeries2=compChart.addLineSeries({color:'#ff1744',lineWidth:2});
+  }
+  const e=Date.now()/1000-len*900;
+  compSeries1.setData(h1.map((p,i)=>({time:Math.round(e+i*900),value:p})));
+  compSeries2.setData(h2.map((p,i)=>({time:Math.round(e+i*900),value:p})));
+  compChart.timeScale().fitContent()
+}
+
+function initCompChart(d){
+  const s1=document.getElementById('compAsset1');
+  const s2=document.getElementById('compAsset2');
+  const assets=Object.keys(d.price_history||{});
+  if(!assets.length)return;
+  s1.innerHTML=assets.map(a=>`<option value="${a}">${a}</option>`).join('');
+  s2.innerHTML=assets.map(a=>`<option value="${a}">${a}</option>`).join('');
+  if(assets.length>=2){s1.value=assets[0];s2.value=assets[1]}
+  updateCompChart()
+}
+
 function loadData(){
   const icon=document.getElementById('refreshIcon');
   if(icon)icon.className='fas fa-sync-alt spin';
@@ -622,6 +727,8 @@ function loadData(){
       renderArchive(d);
       renderAlerts(d);
       renderSentiment(d);
+      renderHeatmap(d);
+      renderPerfHour(d);
       for(let a in (d.price_history||{})){chartDataCache[a]=d.price_history[a]}
       for(let a in (d.ohlcv_history||{})){ohlcvCache[a]=d.ohlcv_history[a]}
       if(!lwChart){
@@ -629,12 +736,13 @@ function loadData(){
       } else {
         updateChartData();
       }
+      initCompChart(d);
       if(icon)icon.className='fas fa-sync-alt';
       updateSignalFilterUI();
     })
     .catch(err=>{
       console.error(err);
-      document.getElementById('loading').innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i><p style="color:var(--red)">Connection error. Retrying in 30s...</p></div>`;
+      document.getElementById('loading').innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i><p style="color:var(--red)">⚠️ Connection error — لا يمكن الاتصال بالسيرفر</p><p style="color:var(--text3);font-size:13px;margin-top:8px">تأكد من أن البوت شغال على mango.fps.ms:10993<br>سيتم إعادة المحاولة تلقائياً كل 15 ثانية</p></div>`;
       if(icon)icon.className='fas fa-sync-alt'
     })
 }
