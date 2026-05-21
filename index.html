@@ -215,6 +215,7 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div id="dashboard">
+    <div id="firstLoadMsg" style="text-align:center;padding:60px 20px"><i class="fas fa-circle-notch spin" style="font-size:30px;color:var(--gold)"></i><p style="color:var(--text3);margin-top:12px">🌀 جلب البيانات من AURA...</p></div>
 
     <div id="statsGrid"><div class="grid grid-4" id="statsCards"></div></div>
 
@@ -934,6 +935,7 @@ function loadData(){
     .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
     .then(d=>{
       data=d;
+      document.getElementById('firstLoadMsg')&&(document.getElementById('firstLoadMsg').remove());
       const db=d.bot_status==='online';
       document.getElementById('statusBadge').className='status-badge '+(db?'online':'offline');
       document.getElementById('statusDot').className='pulse '+(db?'on anim':'off');
