@@ -462,8 +462,9 @@ function renderSignals(sigs){
       const confColor=conf>=80?'var(--green)':(conf>=60?'var(--yellow)':'var(--red)');
       const userStatus=s.user_entered?'<span class="tag win">✅ ENTERED</span>':(s.user_skipped?'<span class="tag loss">⏭ SKIPPED</span>':'<span style="color:var(--text3);font-size:11px">—</span>');
       const canAct=!s.user_entered&&!s.user_skipped;
+      const hasEntered=s.user_entered && s.result==='pending';
       const id=s.id||s.timestamp;
-      const actions=canAct?`<button class="action-btn enter" onclick="apiAction('${id}','enter')" title="Enter">✅</button><button class="action-btn skip" onclick="apiAction('${id}','skip')" title="Skip">⏭</button>`:'<span style="color:var(--text3);font-size:11px">—</span>';
+      const actions=canAct?`<button class="action-btn enter" onclick="apiAction('${id}','enter')" title="Enter">✅</button><button class="action-btn skip" onclick="apiAction('${id}','skip')" title="Skip">⏭</button>`:(hasEntered?`<button class="action-btn skip" onclick="apiAction('${id}','exit')" title="Exit Now">🚪 EXIT</button>`:'<span style="color:var(--text3);font-size:11px">—</span>');
       return `<tr>
         <td style="color:var(--text3);font-size:12px">${s.timestamp?new Date(s.timestamp).toLocaleString('en-US',{hour12:false}):'--'}</td>
         <td><span class="asset-name" onclick="switchAsset('${s.asset}')">${s.asset||'--'}</span></td>
