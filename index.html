@@ -3,13 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AURA CLOUD — Monitoring Dashboard</title>
+<meta name="description" content="AURA CLOUD — منصة تحليل فني ذكية مع إشارات تداول حية، رادار آلي، ومخططات تفاعلية. تابع الأسواق المالية بذكاء اصطناعي.">
+<meta name="keywords" content="تداول, تحليل فني, فوركس, عملات رقمية, ذهب, إشارات تداول, trading, forex, AI trading, technical analysis">
+<meta name="author" content="AURA CLOUD">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="AURA CLOUD — تحليل فني بالذكاء الاصطناعي">
+<meta property="og:description" content="منصة مراقبة الأسواق المالية مع إشارات تداول حية ورادار آلي">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0a0e1a">
+<title>AURA CLOUD — تحليل فني بالذكاء الاصطناعي | تداول, فوركس, عملات</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://s3.tradingview.com/tv.js"></script>
 <style>
-:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2444;--gold:#deadfd;--gold2:#c084fc;--green:#00c853;--red:#ff1744;--yellow:#ffd600;--text:#d0d4dd;--text2:#888;--text3:#555;--card-bg:#111827;--border:#1a2444}
+:root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2444;--gold:#deadfd;--gold2:#c084fc;--green:#00c853;--red:#ff1744;--yellow:#ffd600;--text:#d0d4dd;--text2:#888;--text3:#555;--card-bg:#111827;--border:#1a2444;--shadow:0 4px 24px rgba(0,0,0,0.3);--shadow-hover:0 8px 40px rgba(222,173,253,0.08);--radius:12px;--transition:all 0.3s ease}
+.nav-bar{position:sticky;top:0;z-index:100;background:rgba(10,14,26,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:10px 20px;gap:12px}
+.nav-logo{font-size:18px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--text)}
+.nav-icon{font-size:24px}
+.nav-cloud{color:var(--gold)}
+.nav-links{display:flex;gap:4px;flex-wrap:wrap}
+.nav-link{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text3);transition:var(--transition);text-decoration:none}
+.nav-link:hover{color:var(--gold);background:var(--bg3)}
+@media(max-width:700px){.nav-links{display:none}.nav-bar{justify-content:space-between}}
+html{scroll-behavior:smooth}
 .heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
 .heatmap-item{padding:8px;border-radius:6px;text-align:center;font-size:11px;font-weight:600;border:1px solid var(--border)}
 .heatmap-item .h-asset{font-size:10px;color:var(--text3)}
@@ -53,8 +72,8 @@ a{color:var(--gold);text-decoration:none}
 .grid-2{grid-template-columns:1fr 1fr}
 @media(max-width:900px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
 @media(max-width:500px){.grid-4,.grid-3{grid-template-columns:1fr}}
-.card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s ease}
-.card:hover{border-color:var(--gold);box-shadow:0 0 30px rgba(222,173,253,0.05)}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px;transition:var(--transition);box-shadow:var(--shadow)}
+.card:hover{border-color:var(--gold);box-shadow:var(--shadow-hover);transform:translateY(-1px)}
 .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .card-title{font-size:13px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
 .card-title i{margin-left:8px;color:var(--gold);width:18px;text-align:center}
@@ -167,16 +186,17 @@ tr:last-child td{border-bottom:none}
 <div id="ghBanner" style="display:none;background:#ffd60022;color:var(--yellow);text-align:center;padding:8px 16px;font-size:13px;border-bottom:1px solid #ffd60044">
   <i class="fas fa-info-circle"></i> البيان المباشر مع التفاعل: <a id="botUrlLink" style="color:var(--gold);font-weight:600" target="_blank">www.fps.ms:10993/monitor.html</a>
 </div>
-<div class="header" style="flex-direction:column;gap:8px">
-  <div style="display:flex;align-items:center;gap:12px">
-    <div class="logo">A</div>
-    <div class="logo-text">AURA <span>| CLOUD</span></div>
+<div class="nav-bar">
+  <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span class="nav-icon">🌀</span> AURA <span class="nav-cloud">CLOUD</span></div>
+  <div class="nav-links">
+    <a href="#stats" class="nav-link" onclick="document.getElementById('statsGrid').scrollIntoView({behavior:'smooth'})">📊 الإحصائيات</a>
+    <a href="#chart" class="nav-link" onclick="document.getElementById('signalChart').scrollIntoView({behavior:'smooth'})">📈 الرسم البياني</a>
+    <a href="#signals" class="nav-link" onclick="document.getElementById('signalFilters').scrollIntoView({behavior:'smooth'})">📡 الإشارات</a>
+    <a href="#scanner" class="nav-link" onclick="document.getElementById('scannerCard').scrollIntoView({behavior:'smooth'})">🔍 الماسح</a>
+    <a href="#tools" class="nav-link" onclick="document.getElementById('positionCalc').scrollIntoView({behavior:'smooth'})">🛠 الأدوات</a>
   </div>
-  <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-    <div class="status-badge online" id="statusBadge"><span class="pulse on anim" id="statusDot"></span><span id="statusText">ONLINE</span></div>
-    <div class="clock"><i class="far fa-clock"></i><span id="clock"></span></div>
-    <button class="filter-btn" onclick="requestNotifPerm()" style="color:var(--yellow);border-color:var(--yellow);font-size:11px" title="Enable notifications"><i class="fas fa-bell"></i></button>
-    <div style="font-size:13px;color:var(--text3);cursor:pointer" onclick="loadData()"><i class="fas fa-sync-alt" id="refreshIcon"></i></div>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span id="statusBadge" class="status-badge"><span id="statusDot" class="pulse off"></span><span id="statusText">OFFLINE</span></span>
   </div>
 </div>
 
@@ -189,7 +209,7 @@ tr:last-child td{border-bottom:none}
 
   <div id="dashboard" style="display:none">
 
-    <div class="grid grid-4" id="statsCards"></div>
+    <div id="statsGrid"><div class="grid grid-4" id="statsCards"></div></div>
 
     <div class="card" style="padding:12px;margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px">
@@ -222,7 +242,7 @@ tr:last-child td{border-bottom:none}
     <div style="margin-bottom:16px;overflow-x:auto;white-space:nowrap">
       <div class="tabs" id="assetTabs" style="flex-wrap:nowrap"></div>
     </div>
-    <div class="card" style="padding:12px">
+    <div class="card" style="padding:12px" id="signalChart">
       <div id="gcChartContainer" style="height:480px;width:100%;border-radius:8px;overflow:hidden"></div>
     </div>
 
@@ -256,7 +276,7 @@ tr:last-child td{border-bottom:none}
       <input class="search-input" id="searchInput" placeholder="Search asset..." oninput="filterSignals()">
       <button class="filter-btn" onclick="exportCSV()" style="color:var(--gold);border-color:var(--gold)" title="Export CSV"><i class="fas fa-download"></i> CSV</button>
     </div>
-    <div class="table-wrap" id="signalsTable"><div class="empty-state"><i class="fas fa-database"></i><p>لا توجد إشارات بعد</p><p style="font-size:12px;color:var(--text3);margin-top:6px">الرادار يبحث عن إشارات جديدة كل 30 دقيقة</p></div></div>
+    <div class="table-wrap" id="signalsTable"><div class="empty-state"><i class="fas fa-database"></i><p style="font-size:16px;font-weight:600;color:var(--text2)">⏳ انتظر الإشارات الأولى...</p><p style="font-size:12px;color:var(--text3);margin-top:6px">الرادار يولد إشارات تلقائياً كل 30 دقيقة</p></div></div>
 
     <div class="card" id="scannerCard">
       <div class="card-header"><span class="card-title"><i class="fas fa-search"></i> Market Scanner</span> <button class="filter-btn" onclick="scanMarket()" style="font-size:11px">🔄 Scan</button></div>
@@ -278,7 +298,7 @@ tr:last-child td{border-bottom:none}
       <div id="rcResult" style="margin-top:8px;font-size:13px;color:var(--text3)">Fill the fields above</div>
     </div>
 
-    <div class="card" style="grid-column:span 1">
+    <div class="card" style="grid-column:span 1" id="positionCalc">
       <div class="card-header"><span class="card-title"><i class="fas fa-calculator"></i> Position Size</span></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
         <div><label style="color:var(--text3);font-size:11px">Balance ($)</label><input type="number" id="psBalance" value="1000" class="calc-input" oninput="calcPosition()"></div>
@@ -561,7 +581,7 @@ function renderSignals(sigs){
         <td>${resultLabel(s.result)}</td>
         <td style="font-size:11px">${decisionLabel(s)}</td>
         <td style="font-size:11px">${s.tags&&s.tags.length?s.tags.map(t=>`<span class="tag" style="font-size:9px;padding:1px 5px">${t}</span>`).join(' '):'<span style="color:var(--text3)">—</span>'}</td>
-        <td style="font-size:11px;max-width:100px">${s.notes?`<span style="color:var(--text2);font-size:10px">${s.notes}</span>`:'<span style="color:var(--text3)">—</span>'}</td>
+        <td style="font-size:11px;max-width:100px"><input class="note-input" value="${s.notes||''}" placeholder="ملاحظة..." onchange="saveNote('${id}',this)" onclick="this.select()"/></td>
         <td style="font-size:11px;max-width:140px">${s.ai_review?`<span style="color:var(--text2)">${s.ai_review}</span>`:`<button class="action-btn" onclick="requestAiReview('${id}')" title="AI Review" style="font-size:10px;padding:2px 8px">🔍 تحليل</button>`}</td>
         <td style="font-size:11px"><button class="action-btn" onclick="copySignalId('${id}')" title="Copy ID" style="font-size:11px">🔗</button></td>
         <td style="font-size:13px">${actions}</td>
@@ -599,9 +619,14 @@ function copySignalId(id){
   ta.value=id; ta.style.position='fixed'; ta.style.opacity='0';
   document.body.appendChild(ta); ta.select();
   try{document.execCommand('copy')?showToast('✅ ID: '+id,'var(--green)'):showToast('❌ Copy failed','var(--red)')}catch(e){showToast('❌ Copy failed','var(--red)')}
-  document.body.removeChild(ta)
+document.body.removeChild(ta)
 }
-
+function saveNote(sigId, el){
+  const note=el.value;
+  const base=IS_GHPAGES?BOT_URL:'';
+  fetch(base+'/api/note/'+sigId,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({note})})
+    .then(r=>r.json()).then(d=>{}).catch(()=>{})
+}
 function requestAiReview(sigId){
   const base=IS_GHPAGES?BOT_URL:'';
   showToast('🔍 جاري تحليل الصفقة...','var(--gold)');
@@ -825,11 +850,11 @@ function updateCompChart(){
 function initCompChart(d){
   const s1=document.getElementById('compAsset1');
   const s2=document.getElementById('compAsset2');
-  const assets=Object.keys(d.price_history||{});
+  const assets=ALL_ASSETS;
   if(!assets.length)return;
   s1.innerHTML=assets.map(a=>`<option value="${a}">${a}</option>`).join('');
   s2.innerHTML=assets.map(a=>`<option value="${a}">${a}</option>`).join('');
-  if(assets.length>=2){s1.value=assets[0];s2.value=assets[1]}
+  s1.value=ALL_ASSETS[0];s2.value=ALL_ASSETS[Math.min(1,ALL_ASSETS.length-1)];
   updateCompChart()
 }
 
