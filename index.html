@@ -96,6 +96,7 @@ tr:last-child td{border-bottom:none}
 .empty-state i{font-size:40px;margin-bottom:12px;color:var(--bg3)}
 .empty-state p{font-size:14px}
 #gcChartContainer{min-height:400px;width:100%}
+#pnlChartContainer{min-height:250px;width:100%}
 .alert-item{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg);border-radius:8px;border:1px solid var(--border);margin-bottom:6px}
 .alert-item .alert-asset{font-weight:600;color:var(--gold)}
 .alert-item .alert-target{font-size:13px;font-weight:500}
@@ -156,6 +157,7 @@ tr:last-child td{border-bottom:none}
   <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
     <div class="status-badge online" id="statusBadge"><span class="pulse on anim" id="statusDot"></span><span id="statusText">ONLINE</span></div>
     <div class="clock"><i class="far fa-clock"></i><span id="clock"></span></div>
+    <button class="filter-btn" onclick="requestNotifPerm()" style="color:var(--yellow);border-color:var(--yellow);font-size:11px" title="Enable notifications"><i class="fas fa-bell"></i></button>
     <div style="font-size:13px;color:var(--text3);cursor:pointer" onclick="loadData()"><i class="fas fa-sync-alt" id="refreshIcon"></i></div>
   </div>
 </div>
@@ -214,6 +216,11 @@ tr:last-child td{border-bottom:none}
         <span style="color:var(--text3);font-size:12px">— Select two assets to compare</span>
       </div>
       <div id="compChartContainer" style="height:300px;width:100%;border-radius:8px;overflow:hidden"></div>
+    </div>
+
+    <div class="card" id="pnlCard">
+      <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> P&L Growth</span></div>
+      <div id="pnlChartContainer" style="height:250px;width:100%"></div>
     </div>
 
     <div class="section-title">
@@ -308,6 +315,12 @@ function showToast(msg,color='var(--green)'){
   t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)
 }
 
+function requestNotifPerm(){
+  if('Notification' in window){
+    Notification.requestPermission().then(p=>showToast(p==='granted'?'🔔 Notifications ON':'🔕 Notifications blocked','var(--'+(p==='granted'?'green':'red')+')'))
+  }
+}
+
 function animateValue(el,start,end,duration=800){
   if(!el)return;
   const r=Math.min(start,end);const diff=Math.abs(end-start);
@@ -372,6 +385,7 @@ function renderStats(d){
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-shield-alt"></i> Sharpe</span><span class="sm-value" style="color:${ev.sharpe>=1?'var(--green)':'var(--red)'}">${ev.sharpe}</span></div>
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-arrow-down"></i> Max DD</span><span class="sm-value" style="color:var(--red)">${ev.max_drawdown}</span></div>
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-robot"></i> Bot Status</span><span class="sm-value" style="color:${d.bot_status==='online'?'var(--green)':'var(--red)'}">${d.bot_status==='online'?'OPERATIONAL':'OFFLINE'}</span></div>
+    <div class="stat-mini"><span class="sm-label"><i class="fas fa-brain"></i> AI Accuracy</span><span class="sm-value" style="color:var(--gold)">${d.eval?.win_rate||0}%</span><span style="display:block;font-size:9px;color:var(--text3);margin-top:2px">Across ${d.eval?.total_signals||0} signals</span></div>
   `;
   // Behavior insight
   const b=d.behavior||{};
@@ -454,6 +468,28 @@ function updateChartData(){
   candleSeries.setData(candles);
   volumeSeries.setData(vols);
   lwChart.timeScale().fitContent();
+  // Fibonacci levels
+  if(window.fibLines){
+    window.fibLines.forEach(l=>lwChart.removeSeries(l));
+    window.fibLines=null;
+  }
+  const closePrices = candles.map(c => c.close);
+  if(closePrices && closePrices.length>20){
+    const hi=Math.max(...closePrices.slice(-20));
+    const lo=Math.min(...closePrices.slice(-20));
+    const diff=hi-lo;
+    const fibs=[0,0.236,0.382,0.5,0.618,0.786,1];
+    const times=candles.map(c=>c.time);
+    window.fibLines=[];
+    fibs.forEach(f=>{
+      const level=hi-diff*f;
+      const color=f>=0.5?'rgba(255,69,0,0.4)':'rgba(50,205,50,0.4)';
+      const line=lwChart.addLineSeries({color,lineStyle:2,lineWidth:1,lastValueVisible:false,priceLineVisible:false});
+      const pts=times.map(t=>({time:t,value:level}));
+      line.setData(pts);
+      window.fibLines.push(line);
+    });
+  }
   // TP/SL lines
   if(tpLine){lwChart.removeSeries(tpLine);tpLine=null}
   if(slLine){lwChart.removeSeries(slLine);slLine=null}
@@ -516,7 +552,7 @@ function renderSignals(sigs){
   document.getElementById('signalsTable').innerHTML=`
   <table>
     <thead><tr>
-      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th><th>Decision</th><th>Tags</th><th>Notes</th><th>AI</th><th>Share</th><th>Action</th>
+      <th>Time</th><th>Asset</th><th>Rec</th><th>Pattern</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th><th>Decision</th><th>Tags</th><th>Notes</th><th>AI</th><th>Share</th><th>Action</th>
     </tr></thead>
     <tbody>
     ${sigs.slice().reverse().map(s=>{
@@ -532,6 +568,7 @@ function renderSignals(sigs){
         <td style="color:var(--text3);font-size:12px">${s.timestamp?new Date(s.timestamp).toLocaleString('en-US',{hour12:false}):'--'}<br><span style="font-size:9px;color:var(--bg3)">${s.timestamp?timeAgo(s.timestamp):''}</span></td>
         <td><span class="asset-name" onclick="switchAsset('${s.asset}')">${s.asset||'--'}</span></td>
         <td><span class="tag ${rc}">${recLabel(s.recommendation)}</span></td>
+        <td style="font-size:10px;color:var(--text2)">${s.candle_patterns||'—'}</td>
         <td style="font-weight:600;font-size:14px">${s.price||'--'}</td>
         <td><div style="display:flex;align-items:center;gap:6px"><span style="font-weight:600">${conf}%</span><div class="conf-bar"><div class="conf-fill" style="width:${conf}%;background:${confColor}"></div></div></div></td>
         <td style="color:${s.tp?'var(--text)':'var(--text3)'}">${s.tp||'--'}</td>
@@ -797,6 +834,33 @@ function initCompChart(d){
   updateCompChart()
 }
 
+let pnlChart = null;
+function renderPnlChart(history){
+  const container=document.getElementById('pnlChartContainer');
+  if(!container)return;
+  if(!history||history.length<2){
+    container.innerHTML='<div class="empty-state"><i class="fas fa-chart-line"></i><p>No P&L data yet</p></div>';
+    return
+  }
+  try{
+    if(pnlChart){pnlChart.remove();pnlChart=null}
+    container.innerHTML='';
+    pnlChart=LightweightCharts.createChart(container,{
+      width:container.clientWidth,height:250,
+      layout:{background:{color:'transparent'},textColor:'#888'},
+      grid:{vertLines:{color:'#1a2444'},horzLines:{color:'#1a2444'}},
+      crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
+      rightPriceScale:{borderColor:'#1a2444'},
+      timeScale:{borderColor:'#1a2444',visible:true}
+    });
+    const series=pnlChart.addLineSeries({color:'#00c853',lineWidth:2,priceFormat:{type:'custom',formatter:v=>v.toFixed(2)},crosshairMarkerVisible:true});
+    const data=history.map(h=>({time:Math.floor(h.time/1000),value:h.pnl}));
+    series.setData(data);
+    pnlChart.timeScale().fitContent();
+    window.addEventListener('resize',()=>{if(pnlChart&&container.clientWidth>0)pnlChart.resize(container.clientWidth,250)});
+  }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Chart error</p></div>'}
+}
+
 function loadData(){
   const icon=document.getElementById('refreshIcon');
   if(icon)icon.className='fas fa-sync-alt spin';
@@ -813,11 +877,25 @@ function loadData(){
       renderStats(d);
       renderAssetTabs(d);
       renderSignals(d.signals||[]);
+      // Push notification for new signals
+      if(d.signals && d.signals.length > 0 && 'Notification' in window && Notification.permission==='granted'){
+        const latest=d.signals[d.signals.length-1];
+        if(latest && latest.confidence>=80 && latest.recommendation && !latest.recommendation.includes('WAIT')){
+          const prevId=data && data.signals && data.signals.length>0 ? data.signals[data.signals.length-1].id : null;
+          if(latest.id !== prevId){
+            new Notification('🌀 AURA — Signal ' + latest.asset, {
+              body: latest.recommendation + ' | ' + latest.confidence + '% @ ' + latest.price,
+              icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌀</text></svg>'
+            });
+          }
+        }
+      }
       renderArchive(d);
       renderAlerts(d);
       renderSentiment(d);
       renderHeatmap(d);
       renderPerfHour(d);
+      renderPnlChart(d.pnl_history||[]);
       for(let a in (d.price_history||{})){chartDataCache[a]=d.price_history[a]}
       for(let a in (d.ohlcv_history||{})){ohlcvCache[a]=d.ohlcv_history[a]}
       if(!lwChart){
