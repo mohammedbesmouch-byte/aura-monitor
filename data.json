@@ -1,16 +1,16 @@
 {
   "bot_status": "online",
-  "last_update": "2026-05-21T00:53:53.336250+00:00",
+  "last_update": "2026-05-21T00:57:21.260066+00:00",
   "stats": {
-    "total_signals": 25,
+    "total_signals": 42,
     "win_rate": 100.0,
     "active_alerts": 0,
     "avg_confidence": 58.3
   },
   "eval": {
-    "total_signals": 25,
+    "total_signals": 42,
     "win_rate": 100.0,
-    "entered": 4,
+    "entered": 7,
     "won": 0,
     "lost": 0,
     "entered_win_rate": 0.0
@@ -515,15 +515,349 @@
       "reason": "",
       "user_entered": false,
       "user_skipped": false
-    }
-  ],
-  "sentiment": [
+    },
     {
-      "headline": "",
-      "score": 0,
-      "label": "[NEU]"
+      "id": "GBPJPY_1779324837",
+      "asset": "GBPJPY",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:53:57.788126+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "EURJPY_1779324848",
+      "asset": "EURJPY",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:54:08.427672+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "GBPAUD_1779324859",
+      "asset": "GBPAUD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:54:19.132829+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": true,
+      "user_skipped": false
+    },
+    {
+      "id": "EURCHF_1779324869",
+      "asset": "EURCHF",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:54:29.708978+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": true,
+      "user_skipped": false
+    },
+    {
+      "id": "XAUUSD_1779324880",
+      "asset": "XAUUSD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:54:40.370216+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": true,
+      "user_skipped": false
+    },
+    {
+      "id": "XAGUSD_1779324890",
+      "asset": "XAGUSD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:54:50.980360+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "BTCUSD_1779324901",
+      "asset": "BTCUSD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:55:01.587776+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "EURUSD_1779324929",
+      "asset": "EURUSD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:55:29.089266+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "USDJPY_1779324939",
+      "asset": "USDJPY",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:55:39.689374+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "GBPUSD_1779324950",
+      "asset": "GBPUSD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:55:50.657578+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "AUDUSD_1779324961",
+      "asset": "AUDUSD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:56:01.210321+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "USDCAD_1779324971",
+      "asset": "USDCAD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:56:11.816317+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "USDCHF_1779324986",
+      "asset": "USDCHF",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:56:26.900416+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "NZDUSD_1779324997",
+      "asset": "NZDUSD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:56:37.810699+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "GBPJPY_1779325008",
+      "asset": "GBPJPY",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:56:48.351191+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "EURJPY_1779325019",
+      "asset": "EURJPY",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:56:59.224147+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
+    },
+    {
+      "id": "GBPAUD_1779325029",
+      "asset": "GBPAUD",
+      "recommendation": "WAIT",
+      "price": null,
+      "confidence": 0,
+      "result": null,
+      "timestamp": "2026-05-21T00:57:09.876394+00:00",
+      "tp": "",
+      "sl": "",
+      "risk_reward": "",
+      "support": "",
+      "resistance": "",
+      "rsi": null,
+      "sentiment_label": "",
+      "sentiment_score": 0,
+      "reason": "",
+      "user_entered": false,
+      "user_skipped": false
     }
   ],
+  "sentiment": [],
   "alerts": [],
   "price_history": {
     "EURUSD": [
@@ -767,8 +1101,8 @@
       158.909,
       158.876,
       158.869,
-      158.863,
-      158.871
+      158.86,
+      158.862
     ],
     "GBPUSD": [
       1.34,
@@ -1499,8 +1833,8 @@
       213.45,
       213.407,
       213.444,
-      213.468,
-      213.512
+      213.459,
+      213.465
     ],
     "EURJPY": [
       184.567,
@@ -1621,8 +1955,8 @@
       184.738,
       184.717,
       184.708,
-      184.731,
-      184.745
+      184.718,
+      184.725
     ],
     "GBPAUD": [
       1.885,
@@ -1869,7 +2203,6 @@
       0.915
     ],
     "XAUUSD": [
-      4514.1,
       4510.5,
       4507.9,
       4504.6,
@@ -1987,11 +2320,11 @@
       4548.0,
       4546.2,
       4545.2,
-      4544.6,
-      4545.0
+      4545.2,
+      4544.5,
+      4545.9
     ],
     "XAGUSD": [
-      75.21,
       75.025,
       74.895,
       74.825,
@@ -2109,8 +2442,9 @@
       76.25,
       75.93,
       76.01,
-      76.12,
-      76.13
+      76.155,
+      76.14,
+      76.15
     ],
     "BTCUSD": [
       76738.359,
@@ -2231,8 +2565,8 @@
       77589.828,
       77660.648,
       77667.773,
-      77875.992,
-      77926.531
+      77924.562,
+      77944.727
     ]
   },
   "ohlcv_history": {
@@ -3824,13 +4158,13 @@
       {
         "time": 1779324300000,
         "open": 1.16306,
-        "high": 1.16306,
+        "high": 1.1632,
         "low": 1.16306,
-        "close": 1.16306,
+        "close": 1.1632,
         "volume": 0
       },
       {
-        "time": 1779324794000,
+        "time": 1779325034000,
         "open": 1.1632,
         "high": 1.1632,
         "low": 1.1632,
@@ -5426,17 +5760,17 @@
       {
         "time": 1779324300000,
         "open": 158.869,
-        "high": 158.879,
-        "low": 158.84801,
-        "close": 158.86301,
+        "high": 158.886,
+        "low": 158.83701,
+        "close": 158.86,
         "volume": 0
       },
       {
-        "time": 1779324828000,
-        "open": 158.86501,
-        "high": 158.86501,
-        "low": 158.86501,
-        "close": 158.86501,
+        "time": 1779325037000,
+        "open": 158.862,
+        "high": 158.862,
+        "low": 158.862,
+        "close": 158.862,
         "volume": 0
       }
     ],
@@ -7028,13 +7362,13 @@
       {
         "time": 1779324300000,
         "open": 1.34367,
-        "high": 1.34369,
+        "high": 1.34396,
         "low": 1.34363,
-        "close": 1.34369,
+        "close": 1.34376,
         "volume": 0
       },
       {
-        "time": 1779324794000,
+        "time": 1779325034000,
         "open": 1.34378,
         "high": 1.34378,
         "low": 1.34378,
@@ -8630,17 +8964,17 @@
       {
         "time": 1779324300000,
         "open": 0.71495,
-        "high": 0.71495,
+        "high": 0.71505,
         "low": 0.7149,
-        "close": 0.7149,
+        "close": 0.71505,
         "volume": 0
       },
       {
-        "time": 1779324794000,
-        "open": 0.71505,
-        "high": 0.71505,
-        "low": 0.71505,
-        "close": 0.71505,
+        "time": 1779325034000,
+        "open": 0.715,
+        "high": 0.715,
+        "low": 0.715,
+        "close": 0.715,
         "volume": 0
       }
     ],
@@ -10234,15 +10568,15 @@
         "open": 1.37495,
         "high": 1.37502,
         "low": 1.3745,
-        "close": 1.3749,
+        "close": 1.37487,
         "volume": 0
       },
       {
-        "time": 1779324830000,
-        "open": 1.3748,
-        "high": 1.3748,
-        "low": 1.3748,
-        "close": 1.3748,
+        "time": 1779325036000,
+        "open": 1.37487,
+        "high": 1.37487,
+        "low": 1.37487,
+        "close": 1.37487,
         "volume": 0
       }
     ],
@@ -11835,12 +12169,12 @@
         "time": 1779324300000,
         "open": 0.78717,
         "high": 0.78722,
-        "low": 0.78702,
-        "close": 0.78703,
+        "low": 0.78698,
+        "close": 0.78705,
         "volume": 0
       },
       {
-        "time": 1779324830000,
+        "time": 1779325037000,
         "open": 0.78703,
         "high": 0.78703,
         "low": 0.78703,
@@ -13436,17 +13770,17 @@
       {
         "time": 1779324300000,
         "open": 0.58658,
-        "high": 0.58661,
+        "high": 0.58672,
         "low": 0.58658,
         "close": 0.58661,
         "volume": 0
       },
       {
-        "time": 1779324794000,
-        "open": 0.58672,
-        "high": 0.58672,
-        "low": 0.58672,
-        "close": 0.58672,
+        "time": 1779325034000,
+        "open": 0.58658,
+        "high": 0.58658,
+        "low": 0.58658,
+        "close": 0.58658,
         "volume": 0
       }
     ],
@@ -15038,17 +15372,17 @@
       {
         "time": 1779324300000,
         "open": 213.44901,
-        "high": 213.47301,
+        "high": 213.51601,
         "low": 213.42999,
-        "close": 213.468,
+        "close": 213.459,
         "volume": 0
       },
       {
-        "time": 1779324830000,
-        "open": 213.51199,
-        "high": 213.51199,
-        "low": 213.51199,
-        "close": 213.51199,
+        "time": 1779325038000,
+        "open": 213.465,
+        "high": 213.465,
+        "low": 213.465,
+        "close": 213.465,
         "volume": 0
       }
     ],
@@ -16640,17 +16974,17 @@
       {
         "time": 1779324300000,
         "open": 184.70799,
-        "high": 184.737,
+        "high": 184.755,
         "low": 184.69099,
-        "close": 184.731,
+        "close": 184.718,
         "volume": 0
       },
       {
-        "time": 1779324830000,
-        "open": 184.745,
-        "high": 184.745,
-        "low": 184.745,
-        "close": 184.745,
+        "time": 1779325039000,
+        "open": 184.72501,
+        "high": 184.72501,
+        "low": 184.72501,
+        "close": 184.72501,
         "volume": 0
       }
     ],
@@ -18243,16 +18577,16 @@
         "time": 1779324300000,
         "open": 1.87987,
         "high": 1.88025,
-        "low": 1.87975,
-        "close": 1.87984,
+        "low": 1.87957,
+        "close": 1.87981,
         "volume": 0
       },
       {
-        "time": 1779324830000,
-        "open": 1.87983,
-        "high": 1.87983,
-        "low": 1.87983,
-        "close": 1.87983,
+        "time": 1779325038000,
+        "open": 1.87985,
+        "high": 1.87985,
+        "low": 1.87985,
+        "close": 1.87985,
         "volume": 0
       }
     ],
@@ -19850,23 +20184,15 @@
         "volume": 0
       },
       {
-        "time": 1779324830000,
-        "open": 0.91521,
-        "high": 0.91521,
-        "low": 0.91521,
-        "close": 0.91521,
+        "time": 1779325038000,
+        "open": 0.91513,
+        "high": 0.91513,
+        "low": 0.91513,
+        "close": 0.91513,
         "volume": 0
       }
     ],
     "XAUUSD": [
-      {
-        "time": 1779134400000,
-        "open": 4563.2998,
-        "high": 4567.7002,
-        "low": 4562.3999,
-        "close": 4567.7002,
-        "volume": 413
-      },
       {
         "time": 1779135300000,
         "open": 4566.8999,
@@ -21448,27 +21774,27 @@
         "open": 4545.6001,
         "high": 4547.1001,
         "low": 4541.3999,
-        "close": 4544.6001,
-        "volume": 165
+        "close": 4545.2002,
+        "volume": 182
       },
       {
-        "time": 1779324209000,
-        "open": 4545.0,
-        "high": 4545.0,
-        "low": 4545.0,
-        "close": 4545.0,
+        "time": 1779324300000,
+        "open": 4545.5,
+        "high": 4546.5,
+        "low": 4544.0,
+        "close": 4544.5,
+        "volume": 17
+      },
+      {
+        "time": 1779324437000,
+        "open": 4545.8999,
+        "high": 4545.8999,
+        "low": 4545.8999,
+        "close": 4545.8999,
         "volume": 0
       }
     ],
     "XAGUSD": [
-      {
-        "time": 1779134400000,
-        "open": 77.765,
-        "high": 77.915,
-        "low": 77.745,
-        "close": 77.915,
-        "volume": 99
-      },
       {
         "time": 1779135300000,
         "open": 77.9,
@@ -23050,15 +23376,23 @@
         "open": 75.965,
         "high": 76.2,
         "low": 75.9,
-        "close": 76.12,
-        "volume": 62
+        "close": 76.155,
+        "volume": 70
       },
       {
-        "time": 1779324224000,
-        "open": 76.13,
-        "high": 76.13,
-        "low": 76.13,
-        "close": 76.13,
+        "time": 1779324300000,
+        "open": 76.145,
+        "high": 76.17,
+        "low": 76.125,
+        "close": 76.14,
+        "volume": 5
+      },
+      {
+        "time": 1779324435000,
+        "open": 76.15,
+        "high": 76.15,
+        "low": 76.15,
+        "close": 76.15,
         "volume": 0
       }
     ],
@@ -24650,17 +24984,17 @@
       {
         "time": 1779324300000,
         "open": 77663.07812,
-        "high": 77905.82812,
+        "high": 77987.96094,
         "low": 77663.07031,
-        "close": 77875.99219,
-        "volume": 229425152
+        "close": 77924.5625,
+        "volume": 524541952
       },
       {
-        "time": 1779324831000,
-        "open": 77926.53125,
-        "high": 77926.53125,
-        "low": 77926.53125,
-        "close": 77926.53125,
+        "time": 1779325036000,
+        "open": 77944.72656,
+        "high": 77944.72656,
+        "low": 77944.72656,
+        "close": 77944.72656,
         "volume": 0
       }
     ]
