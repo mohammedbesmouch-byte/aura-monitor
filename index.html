@@ -174,6 +174,12 @@ tr:last-child td{border-bottom:none}
     </div>
     <div class="table-wrap" id="signalsTable"><div class="empty-state"><i class="fas fa-database"></i><p>No signals yet</p></div></div>
 
+    <div class="section-title">
+      <i class="fas fa-archive"></i> Trade Archive
+      <span>| Trades I entered</span>
+    </div>
+    <div id="archiveSection"></div>
+
     <div class="grid grid-2">
       <div>
         <div class="section-title"><i class="fas fa-bell"></i> Active Price Alerts</div>
@@ -274,9 +280,9 @@ function renderStats(d){
   `;
 }
 
+const ALL_ASSETS=['EURUSD','USDJPY','GBPUSD','AUDUSD','USDCAD','USDCHF','NZDUSD','GBPJPY','EURJPY','GBPAUD','EURCHF','XAUUSD','XAGUSD','BTCUSD'];
 function renderAssetTabs(d){
-  const assets=['XAUUSD','BTCUSD','EURUSD','USDJPY','GBPUSD','XAGUSD'];
-  document.getElementById('assetTabs').innerHTML=assets.map(a=>`<div class="tab ${a===currentAsset?'active':''}" onclick="switchAsset('${a}')">${a}</div>`).join('');
+  document.getElementById('assetTabs').innerHTML=ALL_ASSETS.map(a=>`<div class="tab ${a===currentAsset?'active':''}" onclick="switchAsset('${a}')">${a}</div>`).join('');
 }
 
 function initLwChart(){
@@ -369,13 +375,14 @@ function renderSignals(sigs){
   document.getElementById('signalsTable').innerHTML=`
   <table>
     <thead><tr>
-      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>Result</th>
+      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th>
     </tr></thead>
     <tbody>
     ${sigs.slice().reverse().map(s=>{
       const rc=recClass(s.recommendation);
       const conf=s.confidence||0;
       const confColor=conf>=80?'var(--green)':(conf>=60?'var(--yellow)':'var(--red)');
+      const userStatus=s.user_entered?'<span class="tag win">✅ ENTERED</span>':(s.user_skipped?'<span class="tag loss">⏭ SKIPPED</span>':'<span style="color:var(--text3);font-size:11px">—</span>');
       return `<tr>
         <td style="color:var(--text3);font-size:12px">${s.timestamp?new Date(s.timestamp).toLocaleString('en-US',{hour12:false}):'--'}</td>
         <td><span class="asset-name" onclick="switchAsset('${s.asset}')">${s.asset||'--'}</span></td>
@@ -385,6 +392,7 @@ function renderSignals(sigs){
         <td style="color:${s.tp?'var(--text)':'var(--text3)'}">${s.tp||'--'}</td>
         <td style="color:${s.sl?'var(--text)':'var(--text3)'}">${s.sl||'--'}</td>
         <td style="font-weight:${s.risk_reward?'600':'400'};color:${s.risk_reward?'var(--gold)':'var(--text3)'}">${s.risk_reward||'--'}</td>
+        <td style="font-size:11px">${userStatus}</td>
         <td>${resultLabel(s.result)}</td>
       </tr>`
     }).join('')}
@@ -413,6 +421,44 @@ function renderAlerts(d){
     const dir=al.direction==='above'?'<i class="fas fa-arrow-up" style="color:var(--green)"></i>':'<i class="fas fa-arrow-down" style="color:var(--red)"></i>';
     return `<div class="alert-item"><div><span class="alert-asset">${al.asset}</span> <span class="alert-dir">${dir} ${al.direction==='above'?'above':'below'}</span></div><span class="alert-target">${al.target}</span></div>`
   }).join('')
+}
+
+function renderArchive(d){
+  const sigs=d.signals||[];
+  const entered=sigs.filter(s=>s.user_entered);
+  const el=document.getElementById('archiveSection');
+  if(!entered.length){el.innerHTML='<div class="empty-state" style="padding:20px"><i class="fas fa-inbox"></i><p>No entered trades yet — click ✅ دخلت الصفقة in Telegram to track</p></div>';return}
+  const wins=entered.filter(s=>s.result==='win').length;
+  const losses=entered.filter(s=>s.result==='loss').length;
+  const pending=entered.filter(s=>s.result==='pending').length;
+  const wr=wins+losses?Math.round(wins/(wins+losses)*100):0;
+  el.innerHTML=`
+    <div class="stats-row" style="margin-bottom:12px">
+      <div class="stat-mini"><span class="sm-label">Entered</span><span class="sm-value" style="color:var(--gold)">${entered.length}</span></div>
+      <div class="stat-mini"><span class="sm-label">Won</span><span class="sm-value" style="color:var(--green)">${wins}</span></div>
+      <div class="stat-mini"><span class="sm-label">Lost</span><span class="sm-value" style="color:var(--red)">${losses}</span></div>
+      <div class="stat-mini"><span class="sm-label">Win Rate</span><span class="sm-value" style="color:${wr>=50?'var(--green)':'var(--red)'}">${wr}%</span></div>
+    </div>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>Result</th></tr></thead>
+      <tbody>
+      ${entered.slice().reverse().map(s=>{
+        const rc=recClass(s.recommendation);
+        const conf=s.confidence||0;
+        return `<tr>
+          <td style="color:var(--text3);font-size:12px">${s.timestamp?new Date(s.timestamp).toLocaleString('en-US',{hour12:false}):'--'}</td>
+          <td><span class="asset-name" onclick="switchAsset('${s.asset}')">${s.asset||'--'}</span></td>
+          <td><span class="tag ${rc}">${recLabel(s.recommendation)}</span></td>
+          <td style="font-weight:600">${s.price||'--'}</td>
+          <td><span style="font-weight:600">${conf}%</span></td>
+          <td>${s.tp||'--'}</td>
+          <td>${s.sl||'--'}</td>
+          <td style="color:var(--gold)">${s.risk_reward||'--'}</td>
+          <td>${resultLabel(s.result)}</td>
+        </tr>`
+      }).join('')}
+      </tbody>
+    </table></div>`
 }
 
 function renderSentiment(d){
@@ -444,6 +490,7 @@ function loadData(){
       renderStats(d);
       renderAssetTabs(d);
       renderSignals(d.signals||[]);
+      renderArchive(d);
       renderAlerts(d);
       renderSentiment(d);
       for(let a in (d.price_history||{})){chartDataCache[a]=d.price_history[a]}
