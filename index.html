@@ -220,6 +220,7 @@ tr:last-child td{border-bottom:none}
       <button class="filter-btn" data-filter="wait">Wait</button>
       <button class="filter-btn" data-filter="win">Win</button>
       <button class="filter-btn" data-filter="loss">Loss</button>
+      <button class="filter-btn" data-filter="telegram" style="color:var(--yellow);border-color:var(--yellow)">📱 Telegram</button>
       <input class="search-input" id="searchInput" placeholder="Search asset..." oninput="filterSignals()">
       <button class="filter-btn" onclick="exportCSV()" style="color:var(--gold);border-color:var(--gold)" title="Export CSV"><i class="fas fa-download"></i> CSV</button>
     </div>
@@ -476,6 +477,16 @@ function resultLabel(r){
   if(r==='loss')return '<span class="tag loss">LOSS</span>';
   return '<span class="tag pending">PENDING</span>'
 }
+function decisionLabel(s){
+  if(!s.user_entered&&!s.user_skipped)return '<span style="color:var(--text3);font-size:11px">—</span>';
+  if(s.result==='pending')return '<span style="color:var(--yellow);font-size:11px">⏳ يحدد</span>';
+  const entered=s.user_entered;
+  const won=s.result==='win';
+  if(entered&&won)return '<span class="tag win">✅ صحيح</span>';
+  if(entered&&!won)return '<span class="tag loss">❌ خطأ</span>';
+  if(!entered&&won)return '<span class="tag loss">❌ فرصة ضائعة</span>';
+  return '<span class="tag win">✅ صواب</span>'
+}
 
 function renderSignals(sigs){
   if(!sigs.length){
@@ -485,7 +496,7 @@ function renderSignals(sigs){
   document.getElementById('signalsTable').innerHTML=`
   <table>
     <thead><tr>
-      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th><th>Action</th>
+      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th><th>Decision</th><th>AI</th><th>Action</th>
     </tr></thead>
     <tbody>
     ${sigs.slice().reverse().map(s=>{
@@ -508,6 +519,8 @@ function renderSignals(sigs){
         <td style="font-weight:${s.risk_reward?'600':'400'};color:${s.risk_reward?'var(--gold)':'var(--text3)'}">${s.risk_reward||'--'}</td>
         <td style="font-size:11px">${userStatus}</td>
         <td>${resultLabel(s.result)}</td>
+        <td style="font-size:11px">${decisionLabel(s)}</td>
+        <td style="font-size:11px;max-width:140px">${s.ai_review?`<span style="color:var(--text2)">${s.ai_review}</span>`:`<button class="action-btn" onclick="requestAiReview('${id}')" title="AI Review" style="font-size:10px;padding:2px 8px">🔍 تحليل</button>`}</td>
         <td style="font-size:13px">${actions}</td>
       </tr>`
     }).join('')}
@@ -528,6 +541,18 @@ function apiAction(sigId, action){
     .catch(e=>showToast('فشل الاتصال بالبوت (Mixed Content? استخدم الرابط المباشر)','var(--red)'))
 }
 
+function requestAiReview(sigId){
+  const base=IS_GHPAGES?BOT_URL:'';
+  showToast('🔍 جاري تحليل الصفقة...','var(--gold)');
+  fetch(base+`/api/analyze_signal/${sigId}`, {method:'POST'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.ok){showToast('✅ '+d.ai_review,'var(--green)');loadData()}
+      else showToast('❌ '+d.error,'var(--red)')
+    })
+    .catch(e=>showToast('❌ فشل الاتصال','var(--red)'))
+}
+
 function filterSignals(){
   if(!data)return;
   const q=document.getElementById('searchInput').value.toUpperCase();
@@ -537,6 +562,7 @@ function filterSignals(){
   else if(currentFilter==='wait')filtered=filtered.filter(s=>recClass(s.recommendation)==='wait');
   else if(currentFilter==='win')filtered=filtered.filter(s=>s.result==='win');
   else if(currentFilter==='loss')filtered=filtered.filter(s=>s.result==='loss');
+  else if(currentFilter==='telegram')filtered=filtered.filter(s=>s.user_entered||s.user_skipped);
   if(q)filtered=filtered.filter(s=>s.asset&&s.asset.toUpperCase().includes(q));
   renderSignals(filtered)
 }
