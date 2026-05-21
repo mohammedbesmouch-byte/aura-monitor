@@ -152,7 +152,19 @@ tr:last-child td{border-bottom:none}
 
     <div class="grid grid-4" id="statsCards"></div>
 
+    <div class="card" style="padding:12px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px">
+        <span style="color:var(--text3)">🤖 Bot Control:</span>
+        <button class="filter-btn" id="btnRadar" onclick="fetch('/api/radar/toggle',{method:'POST'}).then(r=>r.json()).then(d=>{showToast('Radar: '+(d.radar_enabled?'ON':'OFF'));loadData()})" style="color:var(--gold);border-color:var(--gold)">Toggle Radar</button>
+        <button class="filter-btn" onclick="fetch('/api/radar/conf_up',{method:'POST'}).then(r=>r.json()).then(d=>{showToast('Confidence: ≥'+d.min_confidence+'%');loadData()})" style="color:var(--green);border-color:var(--green)">Conf +5%</button>
+        <button class="filter-btn" onclick="fetch('/api/radar/conf_down',{method:'POST'}).then(r=>r.json()).then(d=>{showToast('Confidence: ≥'+d.min_confidence+'%');loadData()})" style="color:var(--red);border-color:var(--red)">Conf -5%</button>
+        <span id="radarStatus" style="color:var(--text3);font-size:12px"></span>
+      </div>
+    </div>
+
     <div class="stats-row" id="miniStats"></div>
+
+    <div class="card" id="behaviorBox" style="padding:12px;margin-bottom:16px;font-size:13px;text-align:center;border-color:var(--gold)"></div>
 
     <div class="section-title">
       <i class="fas fa-chart-line"></i> Real-Time Price Charts
@@ -177,8 +189,24 @@ tr:last-child td{border-bottom:none}
       <button class="filter-btn" data-filter="win">Win</button>
       <button class="filter-btn" data-filter="loss">Loss</button>
       <input class="search-input" id="searchInput" placeholder="Search asset..." oninput="filterSignals()">
+      <button class="filter-btn" onclick="exportCSV()" style="color:var(--gold);border-color:var(--gold)" title="Export CSV"><i class="fas fa-download"></i> CSV</button>
     </div>
     <div class="table-wrap" id="signalsTable"><div class="empty-state"><i class="fas fa-database"></i><p>No signals yet</p></div></div>
+
+    <div class="section-title">
+      <i class="fas fa-calculator"></i> Risk Calculator
+      <span>| Position size & R:R</span>
+    </div>
+    <div class="card" style="padding:16px;margin-bottom:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px">
+        <input class="search-input" id="rcBalance" placeholder="Balance $" oninput="riskCalc()" style="width:100%">
+        <input class="search-input" id="rcRisk" placeholder="Risk %" oninput="riskCalc()" style="width:100%">
+        <input class="search-input" id="rcEntry" placeholder="Entry" oninput="riskCalc()" style="width:100%">
+        <input class="search-input" id="rcStop" placeholder="Stop Loss" oninput="riskCalc()" style="width:100%">
+        <input class="search-input" id="rcTP" placeholder="Take Profit (opt)" oninput="riskCalc()" style="width:100%">
+      </div>
+      <div id="rcResult" style="margin-top:8px;font-size:13px;color:var(--text3)">Fill the fields above</div>
+    </div>
 
     <div class="section-title">
       <i class="fas fa-archive"></i> Trade Archive
@@ -281,13 +309,34 @@ function renderStats(d){
   const assetMap={};
   for(let s of checked){if(!assetMap[s.asset])assetMap[s.asset]={wins:0,total:0};assetMap[s.asset].total++;if(s.result==='win')assetMap[s.asset].wins++}
   for(let a in assetMap){const r=assetMap[a].total?Math.round(assetMap[a].wins/assetMap[a].total*100):0;if(r>bestAsset.wr){bestAsset.name=a;bestAsset.wr=r}}
-  const ev=d.eval||{entered:0,won:0,lost:0,entered_win_rate:0};
+  const ev=d.eval||{entered:0,won:0,lost:0,entered_win_rate:0,profit_factor:0,avg_rr:0,sharpe:0,max_drawdown:0};
   document.getElementById('miniStats').innerHTML=`
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-calendar-day"></i> Today's Signals</span><span class="sm-value">${todaySigs.length}</span></div>
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-check-circle"></i> Entered Trades</span><span class="sm-value" style="color:var(--gold)">${ev.entered}</span></div>
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-trophy"></i> Entered Win Rate</span><span class="sm-value" style="color:${ev.entered_win_rate>=50?'var(--green)':'var(--red)'}">${ev.entered_win_rate}%</span></div>
+    <div class="stat-mini"><span class="sm-label"><i class="fas fa-chart-line"></i> Profit Factor</span><span class="sm-value" style="color:${ev.profit_factor>=1.5?'var(--green)':'var(--yellow)'}">${ev.profit_factor}</span></div>
+    <div class="stat-mini"><span class="sm-label"><i class="fas fa-balance-scale"></i> Avg R:R</span><span class="sm-value" style="color:var(--gold)">${ev.avg_rr}</span></div>
+    <div class="stat-mini"><span class="sm-label"><i class="fas fa-shield-alt"></i> Sharpe</span><span class="sm-value" style="color:${ev.sharpe>=1?'var(--green)':'var(--red)'}">${ev.sharpe}</span></div>
+    <div class="stat-mini"><span class="sm-label"><i class="fas fa-arrow-down"></i> Max DD</span><span class="sm-value" style="color:var(--red)">${ev.max_drawdown}</span></div>
     <div class="stat-mini"><span class="sm-label"><i class="fas fa-robot"></i> Bot Status</span><span class="sm-value" style="color:${d.bot_status==='online'?'var(--green)':'var(--red)'}">${d.bot_status==='online'?'OPERATIONAL':'OFFLINE'}</span></div>
   `;
+  // Behavior insight
+  const b=d.behavior||{};
+  const bs=document.getElementById('behaviorBox');
+  if(bs){
+    const skipAcc=b.skip_accuracy||0; const enterAcc=b.enter_accuracy||0;
+    const selfAware = skipAcc > enterAcc ? "⚠️ تميل لتخطي الصفقات الرابحة!" : (enterAcc > skipAcc + 10 ? "✅ قرارات دخولك أفضل من تخطيك" : "📊 أداء متوازن بين الدخول والتخطي");
+    const skipWarn = b.skipped_winners ? `تخطيت ${b.skipped_winners} صفقة رابحة` : '';
+    bs.innerHTML=`
+      <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px">
+        <span>🥇 <b>${b.best_asset||'---'}</b> <span style="color:var(--text3)">أفضل أصل</span></span>
+        <span>🥉 <b>${b.worst_asset||'---'}</b> <span style="color:var(--text3)">أسوأ أصل</span></span>
+        <span>🔥 أطول فوز: <b>${b.streaks?.max_win_streak||0}</b> | أطول خسارة: <b>${b.streaks?.max_loss_streak||0}</b></span>
+        <span style="color:var(--gold)">${selfAware}</span>
+        ${skipWarn ? `<span style="color:var(--red)">${skipWarn}</span>` : ''}
+      </div>
+    `;
+  }
 }
 
 function renderAssetTabs(d){
@@ -334,6 +383,8 @@ function initLwChart(){
   updateChartData();
 }
 
+let tpLine = null, slLine = null;
+
 function updateChartData(){
   if(!candleSeries) return;
   const bars = ohlcvCache[currentAsset] || [];
@@ -350,6 +401,24 @@ function updateChartData(){
   candleSeries.setData(candles);
   volumeSeries.setData(vols);
   lwChart.timeScale().fitContent();
+  // TP/SL lines
+  if(tpLine){lwChart.removeSeries(tpLine);tpLine=null}
+  if(slLine){lwChart.removeSeries(slLine);slLine=null}
+  if(data){
+    const sig=data.signals.filter(s=>s.asset===currentAsset&&(s.tp||s.sl)).pop();
+    if(sig){
+      const tp=parseFloat(sig.tp); const sl=parseFloat(sig.sl);
+      const lastTime=candles.length?candles[candles.length-1].time:Math.floor(Date.now()/1000);
+      if(tp&&tp>0){
+        tpLine=lwChart.addLineSeries({color:'#00c853',lineWidth:1,lineStyle:2,lastValueVisible:true,priceLineVisible:false});
+        tpLine.setData([{time:lastTime-3600,value:tp},{time:lastTime,value:tp}])
+      }
+      if(sl&&sl>0){
+        slLine=lwChart.addLineSeries({color:'#ff1744',lineWidth:1,lineStyle:2,lastValueVisible:true,priceLineVisible:false});
+        slLine.setData([{time:lastTime-3600,value:sl},{time:lastTime,value:sl}])
+      }
+    }
+  }
 }
 
 function switchAsset(asset){
@@ -447,6 +516,39 @@ function renderAlerts(d){
     const dir=al.direction==='above'?'<i class="fas fa-arrow-up" style="color:var(--green)"></i>':'<i class="fas fa-arrow-down" style="color:var(--red)"></i>';
     return `<div class="alert-item"><div><span class="alert-asset">${al.asset}</span> <span class="alert-dir">${dir} ${al.direction==='above'?'above':'below'}</span></div><span class="alert-target">${al.target}</span></div>`
   }).join('')
+}
+
+function roundTo(n,d){const m=Math.pow(10,d);return Math.round(n*m)/m}
+
+function exportCSV(){
+  if(!data||!data.signals||!data.signals.length){showToast('No data to export','var(--red)');return}
+  const rows=[['Time','Asset','Rec','Price','Conf','TP','SL','R/R','Result','User','Notes']];
+  data.signals.slice().reverse().forEach(s=>{
+    rows.push([s.timestamp||'',s.asset||'',s.recommendation||'',s.price||'',s.confidence||'',s.tp||'',s.sl||'',s.risk_reward||'',s.result||'',s.user_entered?'ENTERED':(s.user_skipped?'SKIPPED':''),s.notes||'']);
+  });
+  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='aura_signals.csv';a.click();
+  showToast('✅ CSV downloaded')
+}
+
+function riskCalc(){
+  const bal=parseFloat(document.getElementById('rcBalance').value)||0;
+  const riskP=parseFloat(document.getElementById('rcRisk').value)||0;
+  const entry=parseFloat(document.getElementById('rcEntry').value)||0;
+  const stop=parseFloat(document.getElementById('rcStop').value)||0;
+  if(!bal||!riskP||!entry||!stop){document.getElementById('rcResult').innerHTML='<span style="color:var(--text3)">Fill all fields</span>';return}
+  const riskAmt=bal*riskP/100;const slDist=Math.abs(entry-stop);
+  const posSize=slDist?riskAmt/slDist:0;const tpVal=parseFloat(document.getElementById('rcTP').value)||0;
+  const tpDist=tpVal?Math.abs(tpVal-entry):0;const pp=tpDist?posSize*tpDist:0;
+  const rr=tpDist&&slDist?roundTo(tpDist/slDist,2):'--';
+  document.getElementById('rcResult').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;font-size:14px">
+      <div>💰 Risk: <strong style="color:var(--red)">${roundTo(riskAmt,2)}$</strong></div>
+      <div>📏 Size: <strong style="color:var(--gold)">${roundTo(posSize,4)}</strong></div>
+      <div>📈 Profit: <strong style="color:var(--green)">${roundTo(pp,2)}$</strong></div>
+      <div>⚖️ R:R: <strong style="color:var(--gold)">${rr}</strong></div>
+    </div>`
 }
 
 function renderArchive(d){
@@ -550,7 +652,7 @@ function updateSignalFilterUI(){
 clock();
 setInterval(clock,1000);
 loadData();
-setInterval(loadData,30000);
+setInterval(loadData,15000);
 
 document.querySelectorAll('.filter-btn').forEach(b=>{
   b.addEventListener('click',function(){
