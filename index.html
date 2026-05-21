@@ -152,8 +152,8 @@ tr:last-child td{border-bottom:none}
       <i class="fas fa-chart-line"></i> Real-Time Price Charts
       <span>| Live from Yahoo Finance</span>
     </div>
-    <div style="margin-bottom:16px">
-      <div class="tabs" id="assetTabs"></div>
+    <div style="margin-bottom:16px;overflow-x:auto;white-space:nowrap">
+      <div class="tabs" id="assetTabs" style="flex-wrap:nowrap"></div>
     </div>
     <div class="card" style="padding:12px">
       <div id="gcChartContainer" style="height:480px;width:100%;border-radius:8px;overflow:hidden"></div>
@@ -201,7 +201,8 @@ tr:last-child td{border-bottom:none}
 
 <script>
 let data = null;
-let currentAsset = 'XAUUSD';
+const ALL_ASSETS=['EURUSD','USDJPY','GBPUSD','AUDUSD','USDCAD','USDCHF','NZDUSD','GBPJPY','EURJPY','GBPAUD','EURCHF','XAUUSD','XAGUSD','BTCUSD'];
+let currentAsset = ALL_ASSETS[0];
 let currentFilter = 'all';
 let chartDataCache = {};
 let ohlcvCache = {};
@@ -280,7 +281,6 @@ function renderStats(d){
   `;
 }
 
-const ALL_ASSETS=['EURUSD','USDJPY','GBPUSD','AUDUSD','USDCAD','USDCHF','NZDUSD','GBPJPY','EURJPY','GBPAUD','EURCHF','XAUUSD','XAGUSD','BTCUSD'];
 function renderAssetTabs(d){
   document.getElementById('assetTabs').innerHTML=ALL_ASSETS.map(a=>`<div class="tab ${a===currentAsset?'active':''}" onclick="switchAsset('${a}')">${a}</div>`).join('');
 }
