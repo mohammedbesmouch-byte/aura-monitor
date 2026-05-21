@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<script src="https://s3.tradingview.com/tv.js"></script>
 <style>
 :root{--bg:#0a0e1a;--bg2:#111827;--bg3:#1a2444;--gold:#deadfd;--gold2:#c084fc;--green:#00c853;--red:#ff1744;--yellow:#ffd600;--text:#d0d4dd;--text2:#888;--text3:#555;--card-bg:#111827;--border:#1a2444}
 .heatmap{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:8px}
@@ -143,6 +143,16 @@ tr:last-child td{border-bottom:none}
 .tag-btn{cursor:pointer;padding:2px 6px;border-radius:4px;font-size:10px;border:1px solid var(--border);background:transparent;margin:1px;transition:all 0.2s}
 .tag-btn:hover{border-color:var(--gold)}
 .tag-btn.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.scan-row{display:grid;grid-template-columns:80px 70px 50px 50px 50px 80px 60px;padding:6px 8px;border-bottom:1px solid var(--border);font-size:11px;align-items:center}
+.scan-header{color:var(--text3);font-weight:500;border-bottom:2px solid var(--border)}
+#chatMessages::-webkit-scrollbar{width:4px}
+#chatMessages::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.chat-msg{margin:2px 0;line-height:1.4}
+.chat-user{text-align:left;color:var(--gold);font-weight:500}
+.chat-ai{text-align:right;color:var(--text2)}
+.chat-ai em{color:var(--text3);font-style:normal}
+.cal-row{display:grid;grid-template-columns:80px 1fr 50px 60px;padding:5px 6px;border-bottom:1px solid var(--border);font-size:10px;align-items:center;gap:4px}
+.cal-header{color:var(--text3);font-weight:500;border-bottom:2px solid var(--border)}
 </style>
 </head>
 <body>
@@ -240,6 +250,11 @@ tr:last-child td{border-bottom:none}
     </div>
     <div class="table-wrap" id="signalsTable"><div class="empty-state"><i class="fas fa-database"></i><p>لا توجد إشارات بعد</p><p style="font-size:12px;color:var(--text3);margin-top:6px">الرادار يبحث عن إشارات جديدة كل 30 دقيقة</p></div></div>
 
+    <div class="card" id="scannerCard">
+      <div class="card-header"><span class="card-title"><i class="fas fa-search"></i> Market Scanner</span> <button class="filter-btn" onclick="scanMarket()" style="font-size:11px">🔄 Scan</button></div>
+      <div id="scannerTable" style="font-size:12px"><span style="color:var(--text3)">Press Scan to analyze all 14 assets</span></div>
+    </div>
+
     <div class="section-title">
       <i class="fas fa-calculator"></i> Risk Calculator
       <span>| Position size & R:R</span>
@@ -266,6 +281,30 @@ tr:last-child td{border-bottom:none}
       <div id="psResult" style="margin-top:10px;padding:10px;background:var(--bg);border-radius:8px;font-size:13px">
         <span style="color:var(--text3)">Fill fields to calculate</span>
       </div>
+    </div>
+
+    <div class="card" style="grid-column:span 1">
+      <div class="card-header"><span class="card-title"><i class="fas fa-flask"></i> Backtest Strategy</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><label style="color:var(--text3);font-size:11px">Asset</label><select id="btAsset" class="calc-input"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>AUDUSD</option><option>XAUUSD</option><option>BTCUSD</option></select></div>
+        <div><label style="color:var(--text3);font-size:11px">Days</label><input type="number" id="btDays" value="30" class="calc-input"></div>
+        <div><label style="color:var(--text3);font-size:11px">RSI Period</label><input type="number" id="btRsiP" value="14" class="calc-input"></div>
+        <div><label style="color:var(--text3);font-size:11px">Oversold ≤</label><input type="number" id="btOs" value="30" class="calc-input"></div>
+        <div><label style="color:var(--text3);font-size:11px">Overbought ≥</label><input type="number" id="btOb" value="70" class="calc-input"></div>
+        <div><label style="color:var(--text3);font-size:11px">TP%</label><input type="number" id="btTp" value="2" class="calc-input"></div>
+        <div style="grid-column:span 2"><button class="filter-btn" onclick="runBacktest()" style="width:100%;color:var(--gold);border-color:var(--gold)">▶ Run Backtest</button></div>
+      </div>
+      <div id="btResult" style="margin-top:10px;font-size:12px;color:var(--text3)">Configure and run</div>
+    </div>
+
+    <div class="card" id="journalCard">
+      <div class="card-header"><span class="card-title"><i class="fas fa-book"></i> Weekly Journal</span> <button class="filter-btn" onclick="generateJournal()" style="font-size:11px">🔄 Generate</button></div>
+      <div id="journalContent" style="font-size:12px;color:var(--text3);line-height:1.6">Press Generate for AI weekly summary</div>
+    </div>
+
+    <div class="card" id="calendarCard">
+      <div class="card-header"><span class="card-title"><i class="fas fa-calendar"></i> Economic Calendar</span> <button class="filter-btn" onclick="loadCalendar()" style="font-size:11px">🔄 Refresh</button></div>
+      <div id="calendarContent" style="font-size:12px;max-height:200px;overflow-y:auto"><span style="color:var(--text3)">Press Refresh</span></div>
     </div>
 
     <div class="section-title">
@@ -302,10 +341,7 @@ const IS_GHPAGES = API_BASE.includes('github.io');
 const BOT_URL = 'http://mango.fps.ms:10993';
 let currentFilter = 'all';
 let chartDataCache = {};
-let ohlcvCache = {};
-let lwChart = null;
-let candleSeries = null;
-let volumeSeries = null;
+let tvWidget = null;
 
 function clock(){ document.getElementById('clock').textContent = new Date().toLocaleString('en-US',{hour12:false}) }
 
@@ -411,109 +447,48 @@ function renderAssetTabs(d){
 }
 
 function initLwChart(){
-  if(lwChart) return;
-  const container = document.getElementById('gcChartContainer');
-  if(!container) return;
-  if(typeof LightweightCharts === 'undefined'){
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text3)"><i class="fas fa-exclamation-triangle" style="margin-left:8px;color:var(--red)"></i> فشل تحميل مكتبة الرسم البياني</div>';
-    return;
-  }
-  const w = container.clientWidth || 900;
-  lwChart = LightweightCharts.createChart(container, {
-    layout: { background: { color: '#111827' }, textColor: '#d0d4dd' },
-    grid: { vertLines: { color: '#1a2444' }, horzLines: { color: '#1a2444' } },
-    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-    rightPriceScale: { borderColor: '#1a2444' },
-    timeScale: { borderColor: '#1a2444', timeVisible: true, secondsVisible: false },
-    width: w,
+  const container=document.getElementById('gcChartContainer');
+  if(!container)return;
+  container.innerHTML='';
+  const symbolMap={'EURUSD':'FX:EURUSD','USDJPY':'FX:USDJPY','GBPUSD':'FX:GBPUSD','AUDUSD':'FX:AUDUSD','USDCAD':'FX:USDCAD','USDCHF':'FX:USDCHF','NZDUSD':'FX:NZDUSD','GBPJPY':'FX:GBPJPY','EURJPY':'FX:EURJPY','GBPAUD':'FX:GBPAUD','EURCHF':'FX:EURCHF','XAUUSD':'COMEX:GC1!','XAGUSD':'COMEX:SI1!','BTCUSD':'BITSTAMP:BTCUSD'};
+  const sym=symbolMap[currentAsset]||'FX:'+currentAsset;
+  if(window.tvWidget){try{window.tvWidget.remove()}catch(e){}}
+  window.tvWidget = new TradingView.widget({
+    container: 'gcChartContainer',
+    width: container.clientWidth,
     height: 450,
-    handleScroll: true,
-    handleScale: true,
+    symbol: sym,
+    interval: '15',
+    timezone: 'Etc/UTC',
+    theme: 'dark',
+    style: '1',
+    locale: 'ar',
+    toolbar_bg: '#0a0e1a',
+    enable_publishing: false,
+    hide_top_toolbar: false,
+    hide_side_toolbar: false,
+    allow_symbol_change: true,
+    save_image: false,
+    studies: ['RSI@tv-basicstudies'],
+    disabled_features: ['use_localstorage_for_settings'],
+    enabled_features: ['study_templates'],
+    overrides: {'paneProperties.background': '#0a0e1a', 'paneProperties.vertGridProperties.color': '#1a2444', 'paneProperties.horzGridProperties.color': '#1a2444'},
+   loading_screen: {backgroundColor: '#0a0e1a'}
   });
-  candleSeries = lwChart.addCandlestickSeries({
-    upColor: '#00c853', downColor: '#ff1744',
-    borderUpColor: '#00c853', borderDownColor: '#ff1744',
-    wickUpColor: '#00c853', wickDownColor: '#ff1744',
-  });
-  volumeSeries = lwChart.addHistogramSeries({
-    priceFormat: { type: 'volume' },
-    priceScaleId: 'volume',
-  });
-  lwChart.priceScale('volume').applyOptions({
-    scaleMargins: { top: 0.8, bottom: 0 },
-    borderColor: '#1a2444',
-  });
-  const ro = new ResizeObserver(() => {
-    if(lwChart) lwChart.applyOptions({ width: container.clientWidth });
-  });
-  ro.observe(container);
-  updateChartData();
 }
 
-let tpLine = null, slLine = null;
 
-function updateChartData(){
-  if(!candleSeries) return;
-  const bars = ohlcvCache[currentAsset] || [];
-  if(!bars || !bars.length){ candleSeries.setData([]); volumeSeries.setData([]); return }
-  const candles = bars.map(b => ({
-    time: Math.floor(b.time / 1000),
-    open: b.open, high: b.high, low: b.low, close: b.close
-  }));
-  const vols = bars.map(b => ({
-    time: Math.floor(b.time / 1000),
-    value: b.volume,
-    color: b.close >= b.open ? 'rgba(0,200,83,0.3)' : 'rgba(255,23,68,0.3)'
-  }));
-  candleSeries.setData(candles);
-  volumeSeries.setData(vols);
-  lwChart.timeScale().fitContent();
-  // Fibonacci levels
-  if(window.fibLines){
-    window.fibLines.forEach(l=>lwChart.removeSeries(l));
-    window.fibLines=null;
-  }
-  const closePrices = candles.map(c => c.close);
-  if(closePrices && closePrices.length>20){
-    const hi=Math.max(...closePrices.slice(-20));
-    const lo=Math.min(...closePrices.slice(-20));
-    const diff=hi-lo;
-    const fibs=[0,0.236,0.382,0.5,0.618,0.786,1];
-    const times=candles.map(c=>c.time);
-    window.fibLines=[];
-    fibs.forEach(f=>{
-      const level=hi-diff*f;
-      const color=f>=0.5?'rgba(255,69,0,0.4)':'rgba(50,205,50,0.4)';
-      const line=lwChart.addLineSeries({color,lineStyle:2,lineWidth:1,lastValueVisible:false,priceLineVisible:false});
-      const pts=times.map(t=>({time:t,value:level}));
-      line.setData(pts);
-      window.fibLines.push(line);
-    });
-  }
-  // TP/SL lines
-  if(tpLine){lwChart.removeSeries(tpLine);tpLine=null}
-  if(slLine){lwChart.removeSeries(slLine);slLine=null}
-  if(data){
-    const sig=data.signals.filter(s=>s.asset===currentAsset&&(s.tp||s.sl)).pop();
-    if(sig){
-      const tp=parseFloat(sig.tp); const sl=parseFloat(sig.sl);
-      const lastTime=candles.length?candles[candles.length-1].time:Math.floor(Date.now()/1000);
-      if(tp&&tp>0){
-        tpLine=lwChart.addLineSeries({color:'#00c853',lineWidth:1,lineStyle:2,lastValueVisible:true,priceLineVisible:false});
-        tpLine.setData([{time:lastTime-3600,value:tp},{time:lastTime,value:tp}])
-      }
-      if(sl&&sl>0){
-        slLine=lwChart.addLineSeries({color:'#ff1744',lineWidth:1,lineStyle:2,lastValueVisible:true,priceLineVisible:false});
-        slLine.setData([{time:lastTime-3600,value:sl},{time:lastTime,value:sl}])
-      }
-    }
-  }
-}
+
+
 
 function switchAsset(asset){
   currentAsset=asset;
-  document.querySelectorAll('#assetTabs .tab').forEach(t=>t.classList.toggle('active',t.textContent.trim()===asset));
-  updateChartData();
+  document.querySelectorAll('.asset-tab').forEach(t=>t.classList.toggle('active',t.dataset.asset===asset));
+  document.getElementById('signalChart').style.display='block';
+  if(window.tvWidget){
+    const symbolMap={'EURUSD':'FX:EURUSD','USDJPY':'FX:USDJPY','GBPUSD':'FX:GBPUSD','AUDUSD':'FX:AUDUSD','USDCAD':'FX:USDCAD','USDCHF':'FX:USDCHF','NZDUSD':'FX:NZDUSD','GBPJPY':'FX:GBPJPY','EURJPY':'FX:EURJPY','GBPAUD':'FX:GBPAUD','EURCHF':'FX:EURCHF','XAUUSD':'COMEX:GC1!','XAGUSD':'COMEX:SI1!','BTCUSD':'BITSTAMP:BTCUSD'};
+    window.tvWidget.setSymbol(symbolMap[asset]||'FX:'+asset);
+  }
 }
 
 function recClass(rec){
@@ -913,11 +888,10 @@ function loadData(){
       renderPerfHour(d);
       renderPnlChart(d.pnl_history||[]);
       for(let a in (d.price_history||{})){chartDataCache[a]=d.price_history[a]}
-      for(let a in (d.ohlcv_history||{})){ohlcvCache[a]=d.ohlcv_history[a]}
-      if(!lwChart){
+      if(!window.tvWidget){
         initLwChart();
       } else {
-        updateChartData();
+        // TradingView handles its own updates
       }
       initCompChart(d);
       if(icon)icon.className='fas fa-sync-alt';
@@ -944,11 +918,142 @@ function updateSignalFilterUI(){
   })
 }
 
+let chatHistory=[];
+function toggleChat(){
+  const p=document.getElementById('chatPanel');
+  const isOpen=p.style.display!=='none';
+  p.style.display=isOpen?'none':'flex';
+  if(!isOpen)document.getElementById('chatInput').focus()
+}
+function sendChat(){
+  const input=document.getElementById('chatInput');
+  const q=input.value.trim();
+  if(!q)return;
+  input.value='';
+  const msgs=document.getElementById('chatMessages');
+  msgs.innerHTML+=`<div class="chat-msg chat-user">👤 ${q}</div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  msgs.innerHTML+=`<div class="chat-msg chat-ai"><em>🌀 جاري التفكير...</em></div>`;
+  const base=IS_GHPAGES?BOT_URL:'';
+  chatHistory.push({role:'user',content:q});
+  fetch(base+'/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question:q,history:chatHistory})})
+    .then(r=>r.json())
+    .then(d=>{
+      msgs.querySelector('.chat-ai:last-child').remove();
+      const answer=d.ok?d.answer:'❌ '+(d.error||'خطأ');
+      msgs.innerHTML+=`<div class="chat-msg chat-ai">🤖 ${answer}</div>`;
+      chatHistory.push({role:'assistant',content:answer});
+      msgs.scrollTop=msgs.scrollHeight
+    })
+    .catch(()=>{
+      msgs.querySelector('.chat-ai:last-child').remove();
+      msgs.innerHTML+=`<div class="chat-msg chat-ai">❌ فشل الاتصال</div>`
+    })
+}
+function scanMarket(){
+  const el=document.getElementById('scannerTable');
+  el.innerHTML='<span style="color:var(--gold)">🔄 Scanning 14 assets...</span>';
+  const base=IS_GHPAGES?BOT_URL:'';
+  fetch(base+'/api/scan')
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok){el.innerHTML='<span style="color:var(--red)">Error</span>';return}
+      const assets=d.assets||[];
+      let html='<div class="scan-row scan-header"><span>Asset</span><span>Price</span><span>RSI15</span><span>RSI1h</span><span>ADX</span><span>Trend</span><span>Pattern</span></div>';
+      assets.forEach(a=>{
+        const trendColor=a.trend==='trending'?'var(--green)':(a.trend==='weak'?'var(--yellow)':'var(--text3)');
+        html+=`<div class="scan-row">
+          <span style="font-weight:600;color:var(--gold);cursor:pointer" onclick="switchAsset('${a.asset}')">${a.asset}</span>
+          <span>${a.price||'--'}</span>
+          <span style="color:${a.rsi_15m&&a.rsi_15m<40?'var(--green)':(a.rsi_15m&&a.rsi_15m>60?'var(--red)':'var(--text)')}">${a.rsi_15m||'--'}</span>
+          <span>${a.rsi_1h||'--'}</span>
+          <span>${a.adx||'--'}</span>
+          <span style="color:${trendColor}">${a.trend||'--'}</span>
+          <span style="font-size:9px">${a.pattern||'—'}</span>
+        </div>`
+      });
+      el.innerHTML=html
+    })
+    .catch(()=>{el.innerHTML='<span style="color:var(--red)">❌ Connection error</span>'})
+}
+function runBacktest(){
+  const asset=document.getElementById('btAsset').value;
+  const days=document.getElementById('btDays').value||30;
+  const el=document.getElementById('btResult');
+  el.innerHTML='🔄 Running backtest...';
+  const base=IS_GHPAGES?BOT_URL:'';
+  fetch(base+`/api/backtest/${asset}/${days}`,{method:'POST'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok){el.innerHTML='❌ '+d.error;return}
+      const bt=d.backtest;
+      let html=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
+        <div><span style="color:var(--text3)">📊 Trades:</span> <strong>${bt.trades}</strong></div>
+        <div><span style="color:var(--text3)">✅ WR:</span> <strong style="color:${bt.win_rate>=50?'var(--green)':'var(--red)'}">${bt.win_rate}%</strong></div>
+        <div><span style="color:var(--text3)">🏆 ROI:</span> <strong style="color:${bt.roi>=0?'var(--green)':'var(--red)'}">${bt.roi}%</strong></div>
+        <div><span style="color:var(--text3)">💰 Balance:</span> <strong>$${bt.final_balance}</strong></div>
+      </div>`;
+      if(bt.trade_log&&bt.trade_log.length){
+        html+=`<div style="border-top:1px solid var(--border);padding-top:6px;max-height:120px;overflow-y:auto;font-size:10px">`;
+        bt.trade_log.forEach(t=>{
+          const c=t.pnl_pct>0?'var(--green)':'var(--red)';
+          html+=`<div style="display:flex;justify-content:space-between;padding:2px 0"><span>${t.direction} ${t.reason}</span><span style="color:${c}">${t.pnl_pct>0?'+':''}${t.pnl_pct}%</span></div>`
+        });
+        html+=`</div>`
+      }
+      el.innerHTML=html
+    })
+    .catch(()=>{el.innerHTML='❌ Connection error'})
+}
+function generateJournal(){
+  const el=document.getElementById('journalContent');
+  el.innerHTML='🔄 Generating...';
+  const base=IS_GHPAGES?BOT_URL:'';
+  fetch(base+'/api/journal')
+    .then(r=>r.json())
+    .then(d=>{
+      el.innerHTML=d.ok?d.report:'❌ '+(d.error||'Error');
+      el.style.color=d.ok?'var(--text2)':'var(--red)'
+    })
+    .catch(()=>{el.innerHTML='❌ Connection error'})
+}
+function loadCalendar(){
+  const el=document.getElementById('calendarContent');
+  el.innerHTML='🔄 Loading...';
+  const base=IS_GHPAGES?BOT_URL:'';
+  fetch(base+'/api/calendar')
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok||!d.events||!d.events.length){el.innerHTML='<span style="color:var(--text3)">No events found</span>';return}
+      let html='<div class="cal-row cal-header"><span>Date</span><span>Event</span><span>Impact</span><span>Forecast</span></div>';
+      d.events.forEach(e=>{
+        const ic=e.impact==='high'?'🔴':(e.impact==='medium'?'🟡':'⚪');
+        const dStr=e.date?new Date(e.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'--';
+        html+=`<div class="cal-row"><span style="color:var(--text3)">${dStr}</span><span>${e.title||'--'}</span><span>${ic}</span><span>${e.forecast||'--'}</span></div>`
+      });
+      el.innerHTML=html
+    })
+    .catch(()=>{el.innerHTML='❌ Error loading calendar'})
+}
+window.addEventListener('resize',()=>{if(window.tvWidget){try{window.tvWidget.resize(document.getElementById('gcChartContainer').clientWidth,450)}catch(e){}}});
+
 clock();
 setInterval(clock,1000);
 loadData();
 setInterval(loadData,15000);
 
 </script>
+<div id="chatBtn" onclick="toggleChat()" style="position:fixed;bottom:20px;right:20px;width:50px;height:50px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:999;box-shadow:0 4px 20px rgba(222,173,253,0.3)"><span style="font-size:24px;color:#000">💬</span></div>
+<div id="chatPanel" style="display:none;position:fixed;bottom:80px;right:20px;width:340px;height:420px;background:var(--card-bg);border:1px solid var(--border);border-radius:12px;z-index:999;flex-direction:column;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+  <div style="padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+    <span style="font-weight:600;color:var(--gold)">💬 AURA Chat</span>
+    <span onclick="toggleChat()" style="cursor:pointer;color:var(--text3);font-size:18px">✕</span>
+  </div>
+  <div id="chatMessages" style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;font-size:13px"></div>
+  <div style="padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px">
+    <input id="chatInput" style="flex:1;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px" placeholder="اسأل عن أي أصل..." onkeydown="if(event.key==='Enter'){sendChat()}">
+    <button onclick="sendChat()" style="padding:8px 14px;background:var(--gold);color:#000;border:none;border-radius:8px;cursor:pointer;font-weight:600">➤</button>
+  </div>
+</div>
 </body>
 </html>
