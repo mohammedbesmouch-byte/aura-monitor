@@ -920,66 +920,55 @@ function renderPnlChart(history){
   }catch(e){container.innerHTML='<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Chart error</p></div>'}
 }
 
+let loadRetries=0;
 function loadData(){
   const icon=document.getElementById('refreshIcon');
   if(icon)icon.className='fas fa-sync-alt spin';
-  // Hide initial message after 5s even if data hasn't loaded yet
-  setTimeout(()=>{
-    const m=document.getElementById('initialMsg');
-    if(m){m.innerHTML='<p style="color:var(--text3);padding:40px">⚠️ تعذر الاتصال — إعادة المحاولة...</p>';setTimeout(()=>m.remove(),3000)}
-  },5000);
-  // On GitHub Pages, show message immediately without blocking
   if(IS_GHPAGES){
-    const msg='🔒 GitHub Pages لا يدعم الاتصال المباشر.<br>استخدم الرابط المباشر:<br><a href="'+BOT_URL+'/monitor.html" target="_blank" style="display:inline-block;margin-top:8px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a>';
+    document.getElementById('initialMsg')&&(document.getElementById('initialMsg').remove());
     document.getElementById('loading').style.display='block';
-    document.getElementById('loading').innerHTML='<div class="empty-state">'+msg+'</div>';
+    document.getElementById('loading').innerHTML='<div class="empty-state"><p style="color:var(--yellow)">🔒 استخدم الرابط المباشر:</p><a href="'+BOT_URL+'/monitor.html" target="_blank" style="display:inline-block;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a></div>';
     if(icon)icon.className='fas fa-sync-alt';
     return;
   }
   fetch('/data.json?_t='+Date.now())
     .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
     .then(d=>{
+      loadRetries=0;
       data=d;
       document.getElementById('initialMsg')&&(document.getElementById('initialMsg').remove());
       const db=d.bot_status==='online';
       document.getElementById('statusBadge').className='status-badge '+(db?'online':'offline');
       document.getElementById('statusDot').className='pulse '+(db?'on anim':'off');
       document.getElementById('statusText').textContent=db?'ONLINE':'OFFLINE';
-      renderStats(d);
-      renderAssetTabs(d);
-      renderSignals(d.signals||[]);
-      // Push notification for new signals
-      if(d.signals && d.signals.length > 0 && 'Notification' in window && Notification.permission==='granted'){
-        const latest=d.signals[d.signals.length-1];
-        if(latest && latest.confidence>=80 && latest.recommendation && !latest.recommendation.includes('WAIT')){
-          const prevId=data && data.signals && data.signals.length>0 ? data.signals[data.signals.length-1].id : null;
-          if(latest.id !== prevId){
-            new Notification('🌀 AURA — Signal ' + latest.asset, {
-              body: latest.recommendation + ' | ' + latest.confidence + '% @ ' + latest.price,
-              icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌀</text></svg>'
-            });
-          }
+      renderStats(d);renderAssetTabs(d);renderSignals(d.signals||[]);
+      if(d.signals && d.signals.length>0 && 'Notification' in window && Notification.permission==='granted'){
+        const s=d.signals[d.signals.length-1];
+        if(s&&s.confidence>=80&&s.recommendation&&!s.recommendation.includes('WAIT')){
+          const prev=data&&data.signals&&data.signals.length>0?data.signals[data.signals.length-1].id:null;
+          if(s.id!==prev)new Notification('🌀 AURA — Signal '+s.asset,{body:s.recommendation+' | '+s.confidence+'% @ '+s.price,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🌀</text></svg>'})
         }
       }
-      renderArchive(d);
-      renderAlerts(d);
-      renderSentiment(d);
-      renderHeatmap(d);
-      renderPerfHour(d);
+      renderArchive(d);renderAlerts(d);renderSentiment(d);renderHeatmap(d);renderPerfHour(d);
       renderPnlChart(d.pnl_history||[]);
       for(let a in (d.price_history||{})){chartDataCache[a]=d.price_history[a]}
-      if(!window.tvWidget){
-        initLwChart();
-      } else {
-        // TradingView handles its own updates
-      }
+      if(!window.tvWidget){initLwChart()}else{}
       initCompChart(d);
       if(icon)icon.className='fas fa-sync-alt';
       updateSignalFilterUI();
     })
     .catch(err=>{
       console.error(err);
-      if(!data)document.getElementById('loading').innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i><p style="color:var(--red)">⚠️ لا يمكن الاتصال بالسيرفر</p>${IS_GHPAGES?`<p style="color:var(--yellow);font-size:13px;margin-top:8px">🔒 استخدم الرابط المباشر:</p><a href="${BOT_URL}/monitor.html" target="_blank" style="display:inline-block;margin-top:8px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a>`:`<p style="color:var(--text3);font-size:13px;margin-top:8px">انتظار إعادة المحاولة...</p>`}</div>`;
+      if(!data){
+        if(loadRetries<3){
+          loadRetries++;
+          const wait=Math.min(loadRetries*5,15);
+          document.getElementById('initialMsg')&&(document.getElementById('initialMsg').innerHTML='<div style="padding:30px"><p style="color:var(--text3);margin-bottom:8px">🌀 جاري الاتصال... (محاولة '+loadRetries+'/3)</p><p style="font-size:12px;color:var(--text3)">قد يستغرق السيرفر 30 ثانية للإقلاع</p></div>');
+          setTimeout(loadData,wait*1000);
+        }else{
+          document.getElementById('initialMsg')&&(document.getElementById('initialMsg').innerHTML='<div style="padding:30px"><p style="color:var(--red);margin-bottom:12px">⚠️ لا يمكن الاتصال</p><button onclick="location.reload()" style="padding:8px 20px;background:var(--gold);color:#000;border:none;border-radius:6px;cursor:pointer;font-weight:600">🔄 إعادة المحاولة</button></div>');
+        }
+      }
       if(icon)icon.className='fas fa-sync-alt'
     })
 }
