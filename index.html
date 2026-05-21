@@ -116,6 +116,9 @@ tr:last-child td{border-bottom:none}
 .fade-in{animation:fadeUp 0.4s ease forwards;opacity:0}
 @keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 .counter{display:inline-block}
+.action-btn{border:none;border-radius:6px;padding:4px 8px;cursor:pointer;font-size:14px;transition:all 0.2s;background:transparent}
+.action-btn.enter:hover{background:#00c85333;transform:scale(1.2)}
+.action-btn.skip:hover{background:#ff174433;transform:scale(1.2)}
 .toast{position:fixed;bottom:20px;right:20px;background:var(--card-bg);border:1px solid var(--green);border-radius:10px;padding:12px 20px;font-size:13px;color:var(--green);z-index:999;opacity:0;transform:translateY(20px);transition:all 0.3s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 .text-center{text-align:center}
@@ -203,6 +206,7 @@ tr:last-child td{border-bottom:none}
 let data = null;
 const ALL_ASSETS=['EURUSD','USDJPY','GBPUSD','AUDUSD','USDCAD','USDCHF','NZDUSD','GBPJPY','EURJPY','GBPAUD','EURCHF','XAUUSD','XAGUSD','BTCUSD'];
 let currentAsset = ALL_ASSETS[0];
+const API_BASE = 'http://37.148.199.194:10993';
 let currentFilter = 'all';
 let chartDataCache = {};
 let ohlcvCache = {};
@@ -375,7 +379,7 @@ function renderSignals(sigs){
   document.getElementById('signalsTable').innerHTML=`
   <table>
     <thead><tr>
-      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th>
+      <th>Time</th><th>Asset</th><th>Rec</th><th>Price</th><th>Conf</th><th>TP</th><th>SL</th><th>R/R</th><th>User</th><th>Result</th><th>Action</th>
     </tr></thead>
     <tbody>
     ${sigs.slice().reverse().map(s=>{
@@ -383,6 +387,9 @@ function renderSignals(sigs){
       const conf=s.confidence||0;
       const confColor=conf>=80?'var(--green)':(conf>=60?'var(--yellow)':'var(--red)');
       const userStatus=s.user_entered?'<span class="tag win">✅ ENTERED</span>':(s.user_skipped?'<span class="tag loss">⏭ SKIPPED</span>':'<span style="color:var(--text3);font-size:11px">—</span>');
+      const canAct=!s.user_entered&&!s.user_skipped;
+      const id=s.id||s.timestamp;
+      const actions=canAct?`<button class="action-btn enter" onclick="apiAction('${id}','enter')" title="Enter">✅</button><button class="action-btn skip" onclick="apiAction('${id}','skip')" title="Skip">⏭</button>`:'<span style="color:var(--text3);font-size:11px">—</span>';
       return `<tr>
         <td style="color:var(--text3);font-size:12px">${s.timestamp?new Date(s.timestamp).toLocaleString('en-US',{hour12:false}):'--'}</td>
         <td><span class="asset-name" onclick="switchAsset('${s.asset}')">${s.asset||'--'}</span></td>
@@ -394,10 +401,21 @@ function renderSignals(sigs){
         <td style="font-weight:${s.risk_reward?'600':'400'};color:${s.risk_reward?'var(--gold)':'var(--text3)'}">${s.risk_reward||'--'}</td>
         <td style="font-size:11px">${userStatus}</td>
         <td>${resultLabel(s.result)}</td>
+        <td style="font-size:13px">${actions}</td>
       </tr>`
     }).join('')}
     </tbody>
   </table>`
+}
+
+function apiAction(sigId, action){
+  fetch(`${API_BASE}/api/${action}/${sigId}`, {method:'POST'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.ok){showToast(action==='enter'?'✅ Trade entered':'⏭ Trade skipped');loadData()}
+      else showToast('Error: '+d.error,'var(--red)')
+    })
+    .catch(e=>showToast('API error: '+e.message,'var(--red)'))
 }
 
 function filterSignals(){
