@@ -176,9 +176,9 @@ tr:last-child td{border-bottom:none}
     <div class="card" style="padding:12px;margin-bottom:16px">
       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px">
         <span style="color:var(--text3)">🤖 Bot Control:</span>
-        <button class="filter-btn" id="btnRadar" onclick="fetch('/api/radar/toggle',{method:'POST'}).then(r=>r.json()).then(d=>{showToast('Radar: '+(d.radar_enabled?'ON':'OFF'));loadData()})" style="color:var(--gold);border-color:var(--gold)">Toggle Radar</button>
-        <button class="filter-btn" onclick="fetch('/api/radar/conf_up',{method:'POST'}).then(r=>r.json()).then(d=>{showToast('Confidence: ≥'+d.min_confidence+'%');loadData()})" style="color:var(--green);border-color:var(--green)">Conf +5%</button>
-        <button class="filter-btn" onclick="fetch('/api/radar/conf_down',{method:'POST'}).then(r=>r.json()).then(d=>{showToast('Confidence: ≥'+d.min_confidence+'%');loadData()})" style="color:var(--red);border-color:var(--red)">Conf -5%</button>
+        <button class="filter-btn" id="btnRadar" onclick="apiToggle('radar/toggle')" style="color:var(--gold);border-color:var(--gold)">Toggle Radar</button>
+        <button class="filter-btn" onclick="apiToggle('radar/conf_up')" style="color:var(--green);border-color:var(--green)">Conf +5%</button>
+        <button class="filter-btn" onclick="apiToggle('radar/conf_down')" style="color:var(--red);border-color:var(--red)">Conf -5%</button>
         <span id="radarStatus" style="color:var(--text3);font-size:12px"></span>
       </div>
     </div>
@@ -309,10 +309,10 @@ let volumeSeries = null;
 
 function clock(){ document.getElementById('clock').textContent = new Date().toLocaleString('en-US',{hour12:false}) }
 
-function showToast(msg,color='var(--green)'){
+function showToast(msg,color='var(--green)',duration=3000){
   const t=document.getElementById('toast');
   t.textContent=msg;t.style.borderColor=color;t.style.color=color;
-  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),duration)
 }
 
 function requestNotifPerm(){
@@ -612,7 +612,11 @@ function timeAgo(ts){
 }
 
 function copySignalId(id){
-  navigator.clipboard.writeText(id).then(()=>showToast('✅ Signal ID copied: '+id,'var(--green)')).catch(()=>showToast('❌ Copy failed','var(--red)'))
+  const ta=document.createElement('textarea');
+  ta.value=id; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand('copy')?showToast('✅ ID: '+id,'var(--green)'):showToast('❌ Copy failed','var(--red)')}catch(e){showToast('❌ Copy failed','var(--red)')}
+  document.body.removeChild(ta)
 }
 
 function requestAiReview(sigId){
@@ -625,6 +629,18 @@ function requestAiReview(sigId){
       else showToast('❌ '+d.error,'var(--red)')
     })
     .catch(e=>showToast('❌ فشل الاتصال','var(--red)'))
+}
+
+function apiToggle(path){
+  const base=IS_GHPAGES?BOT_URL:'';
+  fetch(base+`/api/${path}`,{method:'POST'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.radar_enabled!=null)showToast('Radar: '+(d.radar_enabled?'ON':'OFF'),'var(--gold)');
+      else if(d.min_confidence!=null)showToast('Conf: ≥'+d.min_confidence+'%','var(--gold)');
+      loadData()
+    })
+    .catch(()=>showToast('❌ فشل الاتصال بالسيرفر','var(--red)'))
 }
 
 function filterSignals(){
@@ -921,7 +937,9 @@ function updateSignalFilterUI(){
       document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
       this.classList.add('active');
       currentFilter=this.dataset.filter;
-      filterSignals()
+      filterSignals();
+      const label=this.textContent.trim()||this.dataset.filter;
+      showToast('📊 Filter: '+label,'var(--gold)',1000)
     })
   })
 }
@@ -931,14 +949,6 @@ setInterval(clock,1000);
 loadData();
 setInterval(loadData,15000);
 
-document.querySelectorAll('.filter-btn').forEach(b=>{
-  b.addEventListener('click',function(){
-    document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
-    this.classList.add('active');
-    currentFilter=this.dataset.filter;
-    filterSignals()
-  })
-});
 </script>
 </body>
 </html>
