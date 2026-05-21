@@ -208,13 +208,13 @@ tr:last-child td{border-bottom:none}
 </div>
 
 <div class="container">
-  <div id="loading" class="loading">
+  <div id="loading" class="loading" style="display:none">
     <div><i class="fas fa-circle-notch spin"></i></div>
     <p id="loadingText">🔄 جاري تحميل بيانات AURA...</p>
     <p id="loadingSub" style="font-size:12px;color:var(--text3);margin-top:6px">يتم جلب الإشارات من السيرفر mango.fps.ms:10993</p>
   </div>
 
-  <div id="dashboard" style="display:none">
+  <div id="dashboard">
 
     <div id="statsGrid"><div class="grid grid-4" id="statsCards"></div></div>
 
@@ -922,11 +922,11 @@ function renderPnlChart(history){
 function loadData(){
   const icon=document.getElementById('refreshIcon');
   if(icon)icon.className='fas fa-sync-alt spin';
-  // GitHub Pages detects immediately instead of waiting for timeout
+  // On GitHub Pages, show message immediately without blocking
   if(IS_GHPAGES){
-    document.getElementById('loadingText').textContent='🔒 GitHub Pages لا يدعم الاتصال المباشر';
-    document.getElementById('loadingSub').innerHTML='استخدم الرابط المباشر للبيانات الحية والتفاعل:<br><a href="'+BOT_URL+'/monitor.html" target="_blank" style="display:inline-block;margin-top:8px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a>';
-    document.querySelector('#loading .spin').className='fas fa-exclamation-triangle';
+    const msg='🔒 GitHub Pages لا يدعم الاتصال المباشر.<br>استخدم الرابط المباشر:<br><a href="'+BOT_URL+'/monitor.html" target="_blank" style="display:inline-block;margin-top:8px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a>';
+    document.getElementById('loading').style.display='block';
+    document.getElementById('loading').innerHTML='<div class="empty-state">'+msg+'</div>';
     if(icon)icon.className='fas fa-sync-alt';
     return;
   }
@@ -934,8 +934,6 @@ function loadData(){
     .then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
     .then(d=>{
       data=d;
-      document.getElementById('loading').style.display='none';
-      document.getElementById('dashboard').style.display='block';
       const db=d.bot_status==='online';
       document.getElementById('statusBadge').className='status-badge '+(db?'online':'offline');
       document.getElementById('statusDot').className='pulse '+(db?'on anim':'off');
@@ -974,8 +972,7 @@ function loadData(){
     })
     .catch(err=>{
       console.error(err);
-      const ghMsg=IS_GHPAGES?`<p style="color:var(--yellow);font-size:13px;margin-top:8px">🔒 GitHub Pages لا يدعم طلبات HTTP المباشرة<br>استخدم الرابط المباشر للبيانات الحية والتفاعل:</p><a href="${BOT_URL}/monitor.html" target="_blank" style="display:inline-block;margin-top:8px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a>`:'';
-      document.getElementById('loading').innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i><p style="color:var(--red)">⚠️ لا يمكن الاتصال بالسيرفر</p>${ghMsg||`<p style="color:var(--text3);font-size:13px;margin-top:8px">تأكد من أن البوت شغال<br>سيتم إعادة المحاولة تلقائياً كل 15 ثانية</p>`}</div>`;
+      if(!data)document.getElementById('loading').innerHTML=`<div class="empty-state"><i class="fas fa-exclamation-triangle" style="color:var(--red)"></i><p style="color:var(--red)">⚠️ لا يمكن الاتصال بالسيرفر</p>${IS_GHPAGES?`<p style="color:var(--yellow);font-size:13px;margin-top:8px">🔒 استخدم الرابط المباشر:</p><a href="${BOT_URL}/monitor.html" target="_blank" style="display:inline-block;margin-top:8px;padding:10px 24px;background:var(--gold);color:#000;border-radius:8px;font-weight:700;text-decoration:none">🚀 فتح الموقع المباشر</a>`:`<p style="color:var(--text3);font-size:13px;margin-top:8px">انتظار إعادة المحاولة...</p>`}</div>`;
       if(icon)icon.className='fas fa-sync-alt'
     })
 }
