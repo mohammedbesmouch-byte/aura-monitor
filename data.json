@@ -1,409 +1,22 @@
 {
   "bot_status": "online",
-  "last_update": "2026-05-21T00:48:08.893663+00:00",
+  "last_update": "2026-05-21T00:53:04.689117+00:00",
   "stats": {
-    "total_signals": 18,
-    "win_rate": 100.0,
+    "total_signals": 0,
+    "win_rate": 0,
     "active_alerts": 0,
-    "avg_confidence": 59.1
+    "avg_confidence": 0
   },
   "eval": {
-    "total_signals": 18,
-    "win_rate": 100.0,
-    "entered": 4,
+    "total_signals": 0,
+    "win_rate": 0,
+    "entered": 0,
     "won": 0,
     "lost": 0,
-    "entered_win_rate": 0.0
+    "entered_win_rate": 0
   },
-  "signals": [
-    {
-      "id": "",
-      "asset": "XAGUSD",
-      "recommendation": "شراء",
-      "price": 76.0,
-      "confidence": 70,
-      "result": "win",
-      "timestamp": "2026-05-20T22:54:32.524769+00:00",
-      "tp": "28.0",
-      "sl": "25.5",
-      "risk_reward": "1",
-      "support": "25.8",
-      "resistance": "27.0",
-      "rsi": 27.29,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "مؤشر RSI يشير إلى ذروة البيع، مما يوحي بانعكاس محتمل.",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "",
-      "asset": "AUDUSD",
-      "recommendation": "بيع",
-      "price": 0.7155,
-      "confidence": 70,
-      "result": "win",
-      "timestamp": "2026-05-20T23:02:39.435365+00:00",
-      "tp": "0.7080",
-      "sl": "0.7200",
-      "risk_reward": "1.5",
-      "support": "0.7100",
-      "resistance": "0.7200",
-      "rsi": 21.1,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "مؤشر RSI منخفض للغاية (21.1) يشير إلى ذروة البيع، لكن في ظل عدم وجود أخبار إيجابية محفزة، من المرجح استمرار الاتجاه الها",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "",
-      "asset": "GBPAUD",
-      "recommendation": "شراء",
-      "price": 1.8786,
-      "confidence": 70,
-      "result": "win",
-      "timestamp": "2026-05-20T23:03:49.984303+00:00",
-      "tp": "1.8650",
-      "sl": "1.8850",
-      "risk_reward": "1",
-      "support": "1.8700",
-      "resistance": "1.8800",
-      "rsi": 85.02,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "مؤشر RSI مرتفع للغاية (85.02) يشير إلى حالة شراء مفرط، مما يزيد من احتمالية التصحيح الهبوطي.",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "",
-      "asset": "XAGUSD",
-      "recommendation": "شراء",
-      "price": 76.0,
-      "confidence": 70,
-      "result": "win",
-      "timestamp": "2026-05-20T23:04:24.848242+00:00",
-      "tp": "28.5",
-      "sl": "25.5",
-      "risk_reward": "1",
-      "support": "26.0",
-      "resistance": "28.0",
-      "rsi": 27.29,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "مؤشر RSI في منطقة ذروة البيع، مما يشير إلى احتمال ارتداد صعودي.",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "EURUSD_1779321824",
-      "asset": "EURUSD",
-      "recommendation": "شراء",
-      "price": 1.1628,
-      "confidence": 60,
-      "result": null,
-      "timestamp": "2026-05-21T00:03:44.650146+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 29.99,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "الفني يعتمد على سياق أوسع:",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "USDJPY_1779321840",
-      "asset": "USDJPY",
-      "recommendation": "شراء",
-      "price": 158.895,
-      "confidence": 50,
-      "result": null,
-      "timestamp": "2026-05-21T00:04:00.358068+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 54.66,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "يحتاج إلى مزيد من البيانات لتأكيده:",
-      "user_entered": true,
-      "user_skipped": false
-    },
-    {
-      "id": "GBPUSD_1779321856",
-      "asset": "GBPUSD",
-      "recommendation": "شراء",
-      "price": 1.3431,
-      "confidence": 50,
-      "result": null,
-      "timestamp": "2026-05-21T00:04:16.873770+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 40.06,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "محدود للغاية ويجب استخدامه بحذر شديد:",
-      "user_entered": true,
-      "user_skipped": false
-    },
-    {
-      "id": "AUDUSD_1779321872",
-      "asset": "AUDUSD",
-      "recommendation": "شراء",
-      "price": 0.7149,
-      "confidence": 60,
-      "result": null,
-      "timestamp": "2026-05-21T00:04:32.671209+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 21.1,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "يعتمد فقط على هذه المؤشرات المحدودة ويفتقر إلى سياق أوسع للسوق:",
-      "user_entered": true,
-      "user_skipped": false
-    },
-    {
-      "id": "USDCAD_1779321887",
-      "asset": "USDCAD",
-      "recommendation": "شراء",
-      "price": 1.3749,
-      "confidence": 60,
-      "result": null,
-      "timestamp": "2026-05-21T00:04:47.509296+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 77.59,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "**",
-      "user_entered": true,
-      "user_skipped": false
-    },
-    {
-      "id": "USDCHF_1779321947",
-      "asset": "USDCHF",
-      "recommendation": "شراء",
-      "price": 0.7872,
-      "confidence": 56,
-      "result": null,
-      "timestamp": "2026-05-21T00:05:47.847707+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 67.21,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "**",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "NZDUSD_1779321962",
-      "asset": "NZDUSD",
-      "recommendation": "شراء",
-      "price": 0.5867,
-      "confidence": 60,
-      "result": null,
-      "timestamp": "2026-05-21T00:06:02.765316+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 25.87,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "يعتمد على مؤشر واحد فقط (RSI) ولا يأخذ في الاعتبار عوامل أخرى مهمة مثل الاتجاه العام للسوق، أنماط الشموع، أو الأخبار الا",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "GBPJPY_1779321979",
-      "asset": "GBPJPY",
-      "recommendation": "شراء",
-      "price": 213.427,
-      "confidence": 50,
-      "result": null,
-      "timestamp": "2026-05-21T00:06:19.593495+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 40.08,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "التالي هو تقدير متحفظ ويجب استخدامه بحذر شديد. **هذا ليس نصيحة استثمارية.**",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "EURJPY_1779321994",
-      "asset": "EURJPY",
-      "recommendation": "شراء",
-      "price": 184.723,
-      "confidence": 56,
-      "result": null,
-      "timestamp": "2026-05-21T00:06:34.469672+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 36.29,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "**",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "GBPAUD_1779322009",
-      "asset": "GBPAUD",
-      "recommendation": "شراء",
-      "price": 1.8792,
-      "confidence": 60,
-      "result": null,
-      "timestamp": "2026-05-21T00:06:49.216090+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 85.02,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "التالي مع الأخذ في الاعتبار أن هذا التحليل يعتمد فقط على هذه البيانات المحدودة ويجب استكماله بتحليل فني وأساسي شامل:",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "EURCHF_1779322024",
-      "asset": "EURCHF",
-      "recommendation": "شراء",
-      "price": 0.9151,
-      "confidence": 56,
-      "result": null,
-      "timestamp": "2026-05-21T00:07:04.264811+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 62.65,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "التالي هو تقديري ويجب استخدامه بحذر.  **لا يُعتبر هذا نصيحة استثمارية.**",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "XAUUSD_1779322038",
-      "asset": "XAUUSD",
-      "recommendation": "شراء",
-      "price": 4546.4,
-      "confidence": 56,
-      "result": null,
-      "timestamp": "2026-05-21T00:07:18.588331+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 31.47,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "**",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "XAGUSD_1779322053",
-      "asset": "XAGUSD",
-      "recommendation": "شراء",
-      "price": 76.15,
-      "confidence": 60,
-      "result": null,
-      "timestamp": "2026-05-21T00:07:33.452982+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 27.29,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "نقص المعلومات:",
-      "user_entered": false,
-      "user_skipped": false
-    },
-    {
-      "id": "BTCUSD_1779322065",
-      "asset": "BTCUSD",
-      "recommendation": "شراء",
-      "price": 77521.86,
-      "confidence": 50,
-      "result": null,
-      "timestamp": "2026-05-21T00:07:45.895040+00:00",
-      "tp": "",
-      "sl": "",
-      "risk_reward": "",
-      "support": "",
-      "resistance": "",
-      "rsi": 42.37,
-      "sentiment_label": "[NEU]",
-      "sentiment_score": 0,
-      "reason": "** مؤشر RSI قريب من منطقة التشبع البيعي (أقل من 50)، مما يشير إلى احتمال ارتداد صعودي. مع عدم وجود أخبار سلبية، هناك فرص",
-      "user_entered": false,
-      "user_skipped": true
-    }
-  ],
-  "sentiment": [
-    {
-      "headline": "",
-      "score": 0,
-      "label": "[NEU]"
-    },
-    {
-      "headline": "",
-      "score": 0,
-      "label": "[NEU]"
-    },
-    {
-      "headline": "",
-      "score": 0,
-      "label": "[NEU]"
-    },
-    {
-      "headline": "",
-      "score": 0,
-      "label": "[NEU]"
-    },
-    {
-      "headline": "",
-      "score": 0,
-      "label": "[NEU]"
-    }
-  ],
+  "signals": [],
+  "sentiment": [],
   "alerts": [],
   "price_history": {
     "EURUSD": [
@@ -648,7 +261,7 @@
       158.876,
       158.869,
       158.864,
-      158.862
+      158.871
     ],
     "GBPUSD": [
       1.34,
@@ -1379,8 +992,8 @@
       213.45,
       213.407,
       213.444,
-      213.45,
-      213.447
+      213.456,
+      213.466
     ],
     "EURJPY": [
       184.567,
@@ -1501,8 +1114,8 @@
       184.738,
       184.717,
       184.708,
-      184.71,
-      184.701
+      184.721,
+      184.733
     ],
     "GBPAUD": [
       1.885,
@@ -1867,8 +1480,8 @@
       4548.0,
       4546.2,
       4545.2,
-      4544.2,
-      4544.2
+      4544.5,
+      4544.5
     ],
     "XAGUSD": [
       75.21,
@@ -1989,8 +1602,8 @@
       76.25,
       75.93,
       76.01,
-      76.08,
-      76.08
+      76.135,
+      76.135
     ],
     "BTCUSD": [
       76738.359,
@@ -2111,8 +1724,8 @@
       77589.828,
       77660.648,
       77667.773,
-      77728.109,
-      77729.047
+      77875.992,
+      77880.094
     ]
   },
   "ohlcv_history": {
@@ -3710,7 +3323,7 @@
         "volume": 0
       },
       {
-        "time": 1779324434000,
+        "time": 1779324674000,
         "open": 1.16306,
         "high": 1.16306,
         "low": 1.16306,
@@ -5307,16 +4920,16 @@
         "time": 1779324300000,
         "open": 158.869,
         "high": 158.879,
-        "low": 158.855,
+        "low": 158.84801,
         "close": 158.864,
         "volume": 0
       },
       {
-        "time": 1779324484000,
-        "open": 158.862,
-        "high": 158.862,
-        "low": 158.862,
-        "close": 158.862,
+        "time": 1779324729000,
+        "open": 158.867,
+        "high": 158.867,
+        "low": 158.867,
+        "close": 158.867,
         "volume": 0
       }
     ],
@@ -6908,17 +6521,17 @@
       {
         "time": 1779324300000,
         "open": 1.34367,
-        "high": 1.34367,
+        "high": 1.34369,
         "low": 1.34363,
         "close": 1.34363,
         "volume": 0
       },
       {
-        "time": 1779324434000,
-        "open": 1.34369,
-        "high": 1.34369,
-        "low": 1.34369,
-        "close": 1.34369,
+        "time": 1779324674000,
+        "open": 1.34363,
+        "high": 1.34363,
+        "low": 1.34363,
+        "close": 1.34363,
         "volume": 0
       }
     ],
@@ -8511,12 +8124,12 @@
         "time": 1779324300000,
         "open": 0.71495,
         "high": 0.71495,
-        "low": 0.71495,
-        "close": 0.71495,
+        "low": 0.7149,
+        "close": 0.7149,
         "volume": 0
       },
       {
-        "time": 1779324434000,
+        "time": 1779324674000,
         "open": 0.7149,
         "high": 0.7149,
         "low": 0.7149,
@@ -10112,17 +9725,17 @@
       {
         "time": 1779324300000,
         "open": 1.37495,
-        "high": 1.37501,
-        "low": 1.3746,
-        "close": 1.37492,
+        "high": 1.37502,
+        "low": 1.3745,
+        "close": 1.37497,
         "volume": 0
       },
       {
-        "time": 1779324486000,
-        "open": 1.3746,
-        "high": 1.3746,
-        "low": 1.3746,
-        "close": 1.3746,
+        "time": 1779324743000,
+        "open": 1.37492,
+        "high": 1.37492,
+        "low": 1.37492,
+        "close": 1.37492,
         "volume": 0
       }
     ],
@@ -11714,17 +11327,17 @@
       {
         "time": 1779324300000,
         "open": 0.78717,
-        "high": 0.7872,
-        "low": 0.78708,
-        "close": 0.78711,
+        "high": 0.78722,
+        "low": 0.78707,
+        "close": 0.78713,
         "volume": 0
       },
       {
-        "time": 1779324485000,
-        "open": 0.7871,
-        "high": 0.7871,
-        "low": 0.7871,
-        "close": 0.7871,
+        "time": 1779324747000,
+        "open": 0.78706,
+        "high": 0.78706,
+        "low": 0.78706,
+        "close": 0.78706,
         "volume": 0
       }
     ],
@@ -13316,13 +12929,13 @@
       {
         "time": 1779324300000,
         "open": 0.58658,
-        "high": 0.58658,
+        "high": 0.58661,
         "low": 0.58658,
-        "close": 0.58658,
+        "close": 0.58661,
         "volume": 0
       },
       {
-        "time": 1779324434000,
+        "time": 1779324674000,
         "open": 0.58661,
         "high": 0.58661,
         "low": 0.58661,
@@ -14919,16 +14532,16 @@
         "time": 1779324300000,
         "open": 213.44901,
         "high": 213.47,
-        "low": 213.435,
-        "close": 213.45,
+        "low": 213.42999,
+        "close": 213.45599,
         "volume": 0
       },
       {
-        "time": 1779324486000,
-        "open": 213.44701,
-        "high": 213.44701,
-        "low": 213.44701,
-        "close": 213.44701,
+        "time": 1779324757000,
+        "open": 213.46899,
+        "high": 213.46899,
+        "low": 213.46899,
+        "close": 213.46899,
         "volume": 0
       }
     ],
@@ -16521,16 +16134,16 @@
         "time": 1779324300000,
         "open": 184.70799,
         "high": 184.728,
-        "low": 184.701,
-        "close": 184.71001,
+        "low": 184.69099,
+        "close": 184.72099,
         "volume": 0
       },
       {
-        "time": 1779324485000,
-        "open": 184.703,
-        "high": 184.703,
-        "low": 184.703,
-        "close": 184.703,
+        "time": 1779324762000,
+        "open": 184.729,
+        "high": 184.729,
+        "low": 184.729,
+        "close": 184.729,
         "volume": 0
       }
     ],
@@ -18123,16 +17736,16 @@
         "time": 1779324300000,
         "open": 1.87987,
         "high": 1.88025,
-        "low": 1.87983,
-        "close": 1.87996,
+        "low": 1.87977,
+        "close": 1.88001,
         "volume": 0
       },
       {
-        "time": 1779324487000,
-        "open": 1.87996,
-        "high": 1.87996,
-        "low": 1.87996,
-        "close": 1.87996,
+        "time": 1779324766000,
+        "open": 1.87991,
+        "high": 1.87991,
+        "low": 1.87991,
+        "close": 1.87991,
         "volume": 0
       }
     ],
@@ -19724,17 +19337,17 @@
       {
         "time": 1779324300000,
         "open": 0.91518,
-        "high": 0.91522,
-        "low": 0.91474,
-        "close": 0.91514,
+        "high": 0.9153,
+        "low": 0.91471,
+        "close": 0.91519,
         "volume": 0
       },
       {
-        "time": 1779324487000,
-        "open": 0.91514,
-        "high": 0.91514,
-        "low": 0.91514,
-        "close": 0.91514,
+        "time": 1779324769000,
+        "open": 0.91522,
+        "high": 0.91522,
+        "low": 0.91522,
+        "close": 0.91522,
         "volume": 0
       }
     ],
@@ -21328,15 +20941,15 @@
         "open": 4545.6001,
         "high": 4547.1001,
         "low": 4541.3999,
-        "close": 4544.2002,
-        "volume": 137
+        "close": 4544.5,
+        "volume": 162
       },
       {
-        "time": 1779323852000,
-        "open": 4544.2002,
-        "high": 4544.2002,
-        "low": 4544.2002,
-        "close": 4544.2002,
+        "time": 1779324170000,
+        "open": 4544.5,
+        "high": 4544.5,
+        "low": 4544.5,
+        "close": 4544.5,
         "volume": 0
       }
     ],
@@ -22930,15 +22543,15 @@
         "open": 75.965,
         "high": 76.2,
         "low": 75.9,
-        "close": 76.08,
-        "volume": 52
+        "close": 76.135,
+        "volume": 61
       },
       {
-        "time": 1779323862000,
-        "open": 76.08,
-        "high": 76.08,
-        "low": 76.08,
-        "close": 76.08,
+        "time": 1779324169000,
+        "open": 76.135,
+        "high": 76.135,
+        "low": 76.135,
+        "close": 76.135,
         "volume": 0
       }
     ],
@@ -24530,17 +24143,17 @@
       {
         "time": 1779324300000,
         "open": 77663.07812,
-        "high": 77766.99219,
+        "high": 77905.82812,
         "low": 77663.07031,
-        "close": 77728.10938,
-        "volume": 209534976
+        "close": 77875.99219,
+        "volume": 229425152
       },
       {
-        "time": 1779324485000,
-        "open": 77729.04688,
-        "high": 77729.04688,
-        "low": 77729.04688,
-        "close": 77729.04688,
+        "time": 1779324781000,
+        "open": 77880.09375,
+        "high": 77880.09375,
+        "low": 77880.09375,
+        "close": 77880.09375,
         "volume": 0
       }
     ]
