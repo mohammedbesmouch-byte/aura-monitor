@@ -98,7 +98,7 @@ a{color:var(--gold);text-decoration:none}
 </div>
 <div class="notif" id="notif"></div>
 <script>
-const API='https://mohammedbesmouch-byte.github.io/aura-monitor';let data=null;
+const API='https://mohammedbesmouch-byte.github.io/aura-monitor';const API_LOCAL='http://localhost:10995';let data=null;
 function loadData(){
   fetch(API+'/pocket_data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{data=d;
     document.getElementById('loading').style.display='none';document.getElementById('app').style.display='block';render(d)})
@@ -150,7 +150,7 @@ function analyze(asset){
   document.getElementById('aiPrice').textContent='🌀 جاري...';
   document.getElementById('aiRec').textContent='';document.getElementById('aiInfo').innerHTML='';
   document.getElementById('aiReason').textContent='';document.getElementById('aiActions').innerHTML='';
-  fetch(API+'/api/analyze/'+asset,{method:'POST'}).then(r=>r.json()).then(d=>{
+   fetch('http://localhost:10995/api/analyze/'+asset,{method:'POST'}).then(r=>r.json()).then(d=>{
     if(!d.ok){document.getElementById('aiPrice').textContent='❌ فشل';return;}
     const s=d.signal||{},rec=s.recommendation||'',cls=rec==='CALL'?'call':(rec==='PUT'?'put':'wait');
     const conf=parseInt(s.confidence)||0,cc=conf>=80?'#3fb950':(conf>=60?'#d29922':'#f85149');
@@ -160,8 +160,9 @@ function analyze(asset){
     document.getElementById('aiReason').textContent='📌 '+(s.reason||'');
     document.getElementById('aiActions').innerHTML=`<button class="btn enter" style="flex:1" onclick="api('enter/${d.sig_id}');loadData()">✅ دخلت</button><button class="btn skip" style="flex:1" onclick="api('skip/${d.sig_id}');loadData()">⏭ تخطيت</button>`;
   }).catch(()=>document.getElementById('aiPrice').textContent='❌ فشل الاتصال')}
-function api(p){fetch(API+'/api/'+p,{method:'POST'}).then(()=>loadData()).catch(()=>{})}
-setInterval(()=>{fetch(API+'/pocket_data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{data=d;render(d)}).catch(()=>{})},30000);
+function api(p){fetch('http://localhost:10995/api/'+p,{method:'POST'}).then(()=>loadData()).catch(()=>{})}
+function apiRemote(p){fetch(API+'/pocket_data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{data=d;render(d)}).catch(()=>{})}
+setInterval(apiRemote,30000);
 loadData();
 </script>
 </body>
