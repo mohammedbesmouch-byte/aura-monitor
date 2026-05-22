@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>POCKET OTC — Binary Options</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--gold:#d4a373;--green:#3fb950;--red:#f85149;--yellow:#d29922;--text:#e6edf3;--text2:#8b949e;--border:#30363d;--radius:8px}
+body{background:var(--bg);color:var(--text);font-family:system-ui,sans-serif;font-size:14px;min-height:100vh;padding:0}
+.hdr{position:sticky;top:0;z-index:100;background:rgba(13,17,23,.97);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;justify-content:space-between}
+.hdr-l .logo{font-size:14px;font-weight:700;color:var(--gold)}
+.st-badge{font-size:9px;padding:2px 7px;border-radius:20px;border:1px solid;font-weight:600}
+.st-badge.on{color:var(--green);border-color:#3fb95044}
+.st-badge.off{color:var(--red);border-color:#f8514944}
+.btn{padding:4px 10px;border:none;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;background:var(--bg3);color:var(--text)}
+.btn:hover{filter:brightness(1.2)}
+.btn-sm{padding:2px 6px;font-size:9px}
+.enter{background:#3fb95033;color:var(--green);border:1px solid #3fb95022}
+.enter:hover{background:#3fb950;color:#000}
+.skip{background:#f8514933;color:var(--red);border:1px solid #f8514922}
+.skip:hover{background:#f85149;color:#fff}
+.exit{background:#d2992233;color:var(--yellow);border:1px solid #d2992222}
+.exit:hover{background:#d29922;color:#000}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:8px 12px}
+.stat-c{background:var(--bg2);border-radius:var(--radius);border:1px solid var(--border);padding:8px;text-align:center}
+.stat-v{font-size:15px;font-weight:700}
+.stat-l{font-size:9px;color:var(--text2);margin-top:2px}
+.sec{padding:8px 12px}
+.sec-t{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.sig{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:6px}
+.sig-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sig-a{font-size:12px;font-weight:600}
+.sig-r{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:600}
+.sig-r.call{background:#3fb95022;color:var(--green)}
+.sig-r.put{background:#f8514922;color:var(--red)}
+.sig-r.wait{background:#d2992222;color:var(--yellow)}
+.sig-p{font-size:14px;font-weight:700;margin-bottom:4px}
+.sig-meta{display:flex;gap:8px;font-size:10px;color:var(--text2);margin-bottom:6px;flex-wrap:wrap}
+.sig-btns{display:flex;gap:4px;flex-wrap:wrap}
+.sig-done{font-size:10px;color:var(--text3)}
+.empty{text-align:center;padding:20px;color:var(--text3);font-size:12px}
+.ai-btn-row{display:flex;gap:3px;padding:0 12px 6px;flex-wrap:wrap}
+.ai-btn{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:500;cursor:pointer;color:var(--text);transition:.2s;text-align:center;flex:1;min-width:50px}
+.ai-btn:hover{border-color:var(--gold);color:var(--gold)}
+.ai-btn.act{border-color:var(--gold);background:var(--gold);color:#000;font-weight:700}
+.ai-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:none}
+.ai-card.show{display:block}
+.ai-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ai-sym{font-size:15px;font-weight:700}
+.ai-rec{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:700}
+.ai-rec.call{background:#3fb95022;color:var(--green);border:1px solid #3fb95044}
+.ai-rec.put{background:#f8514922;color:var(--red);border:1px solid #f8514944}
+.ai-price{font-size:22px;font-weight:800;margin-bottom:8px}
+.ai-info{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:8px;font-size:11px}
+.ai-info span{background:var(--bg3);padding:5px 8px;border-radius:5px}
+.ai-info span b{color:var(--text2)}
+.ai-chart{width:100%;height:100px;border-radius:6px;margin-bottom:8px;background:var(--bg)}
+.ai-reason{font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.5}
+.ai-actions{display:flex;gap:4px;border-top:1px solid var(--border);padding-top:8px}
+.log-entry{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:6px 8px;margin-bottom:4px;font-size:10px;display:flex;justify-content:space-between}
+.log-entry .log-act{font-weight:600}
+.log-entry .log-act.win{color:var(--green)}
+.log-entry .log-act.loss{color:var(--red)}
+.log-entry .log-act.enter{color:var(--green)}
+.log-entry .log-act.skip{color:var(--red)}
+.log-entry .log-time{color:var(--text3);font-size:9px}
+.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:11px;z-index:999;display:none;text-align:center}
+a{color:var(--gold);text-decoration:none}
+.pnl-bar{display:flex;align-items:flex-end;gap:2px;height:50px;padding:8px 0}
+.pnl-item{flex:1;border-radius:2px;min-height:4px}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div class="hdr-l"><span class="logo">▲▼ POCKET <span style="color:var(--text3)">OTC</span></span> <span class="st-badge off" id="statusBadge">OFFLINE</span></div>
+  <div><span id="updateTime" style="font-size:9px;color:var(--text3)"></span> <button class="btn btn-sm" onclick="loadData()">↻</button></div>
+</div>
+<div id="loading" style="text-align:center;padding:40px"><div class="spin" style="display:inline-block;width:16px;height:16px;border:2px solid var(--bg3);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite"></div><p style="color:var(--text3);font-size:12px;margin-top:8px">جاري التحميل...</p></div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<div id="app" style="display:none">
+  <div style="display:flex;gap:4px;padding:6px 12px"><button class="btn btn-sm" onclick="api('radar/toggle')">⏯ الرادار</button><button class="btn btn-sm" onclick="api('radar/conf_up')">▲ ثقة</button><button class="btn btn-sm" onclick="api('radar/conf_down')">▼ ثقة</button></div>
+  <div class="sec"><div class="sec-t"><span>📊 الإحصائيات</span></div><div class="stat-row" id="statsRow"></div></div>
+  <div class="sec">
+    <div class="sec-t"><span>🤖 تحليل OTC</span></div>
+    <div class="ai-btn-row" id="assetBtns"></div>
+    <div class="ai-card" id="aiCard">
+      <div class="ai-hdr"><span class="ai-sym" id="aiSym">EURUSD</span><span class="ai-rec" id="aiRec">CALL</span></div>
+      <div class="ai-price" id="aiPrice">💰 0.0000</div>
+      <div class="ai-info" id="aiInfo"></div>
+      <canvas class="ai-chart" id="aiChart"></canvas>
+      <div class="ai-reason" id="aiReason"></div>
+      <div class="ai-actions" id="aiActions"></div>
+    </div>
+  </div>
+  <div class="sec"><div class="sec-t"><span>📡 الإشارات</span><span id="sigCount"></span></div><div id="pnlBar" class="pnl-bar"></div><div id="sigList"></div></div>
+  <div class="sec"><div class="sec-t"><span>📋 السجل</span></div><div id="logList"></div></div>
+</div>
+<div class="notif" id="notif"></div>
+<script>
+const API='';let data=null;
+function loadData(){
+  fetch(API+'/data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{data=d;
+    document.getElementById('loading').style.display='none';document.getElementById('app').style.display='block';render(d)})
+  .catch(()=>setTimeout(loadData,3000))}
+function render(d){
+  const on=d.bot_status==='online';
+  document.getElementById('statusBadge').className='st-badge '+(on?'on':'off');document.getElementById('statusBadge').textContent=on?'ONLINE':'OFFLINE';
+  if(d.last_update)document.getElementById('updateTime').textContent=new Date(d.last_update).toLocaleTimeString();
+  const s=d.stats||{};
+  document.getElementById('statsRow').innerHTML=`<div class="stat-c"><div class="stat-v">${s.total||0}</div><div class="stat-l">📊 الإجمالي</div></div><div class="stat-c"><div class="stat-v" style="color:${s.win_rate>=50?'var(--green)':'var(--red)'}">${s.win_rate||0}%</div><div class="stat-l">✅ ربح</div></div><div class="stat-c"><div class="stat-v">${s.wins||0}/${s.losses||0}</div><div class="stat-l">🏆 ربح/خسارة</div></div>`;
+  const ASSETS=['EURUSD','GBPUSD','USDJPY','XAUUSD','BTCUSD','EURUSD_OTC','GBPUSD_OTC','XAUUSD_OTC','BTCUSD_OTC','AAPL','TSLA'];
+  document.getElementById('assetBtns').innerHTML=ASSETS.map(a=>`<div class="ai-btn" onclick="analyze('${a}')" data-asset="${a}">${a}</div>`).join('');
+  const sigs=d.signals||[];document.getElementById('sigCount').textContent=sigs.length+' إشارة';
+  const sl=document.getElementById('sigList');
+  if(!sigs.length)sl.innerHTML='<div class="empty">لا توجد إشارات</div>';
+  else sl.innerHTML=sigs.slice().reverse().map(s=>{
+    const rc=s.recommendation||'',cls=rc==='CALL'?'call':(rc==='PUT'?'put':'wait');
+    let bt='';
+    if(!s.user_entered&&!s.user_skipped)bt=`<button class="btn enter btn-sm" onclick="api('enter/${s.id}')">✅ دخلت</button><button class="btn skip btn-sm" onclick="api('skip/${s.id}')">⏭ تخطيت</button>`;
+    else if(s.user_entered&&!s.exit_price)bt=`<span class="sig-done" style="color:var(--green)">⏳ متابعة</span><button class="btn exit btn-sm" onclick="api('exit/${s.id}')">🚪 خروج</button>`;
+    else if(s.user_entered&&s.result)bt=`<span class="sig-done" style="color:${s.result==='win'?'var(--green)':'var(--red)'}">${s.result==='win'?'🏆 ربح':'💥 خسارة'}</span>`;
+    else bt=`<span class="sig-done">⏭</span>`;
+    return `<div class="sig"><div class="sig-h"><span class="sig-a">${s.asset}</span><span class="sig-r ${cls}">${rc}</span></div><div class="sig-p">💰 ${s.price||'--'}</div><div class="sig-meta"><span>⏱ ${s.expiry||'--'}</span><span>📊 ${s.confidence||'?'}%</span>${s.rsi?`<span>RSI:${s.rsi}</span>`:''}</div><div class="sig-btns">${bt}</div></div>`;
+  }).join('');
+  const lg=document.getElementById('logList');
+  const acts=sigs.filter(s=>s.user_entered||s.user_skipped).slice(-30).reverse();
+  if(!acts.length)lg.innerHTML='<div class="empty">لا توجد صفقات</div>';
+  else lg.innerHTML=acts.map(s=>{
+    let a='',c='';
+    if(s.user_entered&&s.exit_price&&s.result){a=`${s.result==='win'?'🏆 ربح':'💥 خسارة'} ${s.asset}`;c=s.result;}
+    else if(s.user_entered&&!s.exit_price){a=`✅ متابعة ${s.asset}`;c='enter';}
+    else if(s.user_entered){a=`✅ دخلت ${s.asset}`;c='enter';}
+    else if(s.user_skipped){a=`⏭ تخطيت ${s.asset}`;c='skip';}
+    const t=s.timestamp?new Date(s.timestamp).toLocaleTimeString():'';
+    return `<div class="log-entry"><span><span class="log-act ${c}">${a}</span></span><span class="log-time">${t}</span></div>`;
+  }).join('');
+  const pnl=d.pnl_history||[];
+  const pb=document.getElementById('pnlBar');
+  if(pnl.length>1){const v=pnl.map(p=>p.pnl),mn=Math.min(...v),mx=Math.max(...v),r=mx-mn||1;
+    pb.innerHTML=v.map(p=>`<div class="pnl-item" style="height:${((p-mn)/r)*90+5}%;background:${p>=0?'var(--green)':'var(--red)'}"></div>`).join('')}
+  else pb.innerHTML='';
+}
+let analyzing='';
+function analyze(asset){
+  analyzing=asset;document.querySelectorAll('.ai-btn').forEach(b=>b.classList.remove('act'));
+  const btn=document.querySelector(`.ai-btn[data-asset="${asset}"]`);if(btn)btn.classList.add('act');
+  const card=document.getElementById('aiCard');card.classList.remove('show');
+  document.getElementById('aiSym').textContent=asset;card.classList.add('show');
+  document.getElementById('aiPrice').textContent='🌀 جاري...';
+  document.getElementById('aiRec').textContent='';document.getElementById('aiInfo').innerHTML='';
+  document.getElementById('aiReason').textContent='';document.getElementById('aiActions').innerHTML='';
+  fetch(API+'/api/analyze/'+asset,{method:'POST'}).then(r=>r.json()).then(d=>{
+    if(!d.ok){document.getElementById('aiPrice').textContent='❌ فشل';return;}
+    const s=d.signal||{},rec=s.recommendation||'',cls=rec==='CALL'?'call':(rec==='PUT'?'put':'wait');
+    const conf=parseInt(s.confidence)||0,cc=conf>=80?'#3fb950':(conf>=60?'#d29922':'#f85149');
+    document.getElementById('aiRec').textContent=rec;document.getElementById('aiRec').className='ai-rec '+cls;
+    document.getElementById('aiPrice').textContent='💰 '+(s.price||'--');
+    document.getElementById('aiInfo').innerHTML=`<span><b>📊 ثقة</b> <span style="float:left;color:${cc};font-weight:600">${conf}%</span></span><span><b>⏱ انتهاء</b> <span style="float:left">${s.expiry||'5min'}</span></span><span><b>📊 RSI</b> <span style="float:left">${s.rsi?parseFloat(s.rsi).toFixed(1):'--'}</span></span>`;
+    document.getElementById('aiReason').textContent='📌 '+(s.reason||'');
+    document.getElementById('aiActions').innerHTML=`<button class="btn enter" style="flex:1" onclick="api('enter/${d.sig_id}');loadData()">✅ دخلت</button><button class="btn skip" style="flex:1" onclick="api('skip/${d.sig_id}');loadData()">⏭ تخطيت</button>`;
+  }).catch(()=>document.getElementById('aiPrice').textContent='❌ فشل الاتصال')}
+function api(p){fetch(API+'/api/'+p,{method:'POST'}).then(()=>loadData()).catch(()=>{})}
+setInterval(()=>{fetch(API+'/data.json',{cache:'no-store'}).then(r=>r.json()).then(d=>{data=d;render(d)}).catch(()=>{})},15000);
+loadData();
+</script>
+</body>
+</html>
