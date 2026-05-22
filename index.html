@@ -202,7 +202,9 @@ a{color:var(--gold);text-decoration:none}
 <div class="notif" id="notif"></div>
 
 <script>
-const API = location.hostname.includes('github.io') ? 'http://mango.fps.ms:10993' : '';
+const isGH = location.hostname.includes('github.io');
+const API = isGH ? 'http://mango.fps.ms:10993' : '';
+const DATA_URL = 'data.json';
 let data = null;
 let retries = 0;
 const MAX_RETRIES = 5;
@@ -228,7 +230,7 @@ function loadData(){
 }
 
 function doFetch(){
-  fetch(API+'/data.json',{cache:'no-store'})
+  fetch(DATA_URL,{cache:'no-store'})
     .then(r=>{if(!r.ok)throw new Error(r.status);return r.json()})
     .then(d=>{
       data = d;
